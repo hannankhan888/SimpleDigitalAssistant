@@ -1,4 +1,8 @@
 import webbrowser
+import winapps
+
+for item in winapps.search_installed('chrome'):
+    print(item)
 
 
 url1 = 'youtube.com'
