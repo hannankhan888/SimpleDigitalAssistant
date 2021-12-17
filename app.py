@@ -1,5 +1,7 @@
 import sys
 from PyQt5.QtWidgets import *
+from utils.actions import curr_time_date
+
 
 
 class RootWindow(QMainWindow):
@@ -27,7 +29,7 @@ class RootWindow(QMainWindow):
         self.setWindowTitle("SimpleDigitalAssistant")
 
         self.welcome_label = QLabel()
-        self.welcome_label.setText("Welcome to your digital assistant, MAX!")
+        self.welcome_label.setText("Welcome to your digital assistant, MAX! the current time and date is %s" % curr_time_date)
 
         self.main_frame_layout.addWidget(self.welcome_label)
         self.main_frame.setLayout(self.main_frame_layout)
