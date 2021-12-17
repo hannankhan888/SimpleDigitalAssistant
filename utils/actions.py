@@ -4,6 +4,8 @@ import webbrowser
 from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
+import screen_brightness_control as sbc
+
 # key is the application name (str), value is the rest of the info.
 app_results = {}
 url1 = 'youtube.com'
@@ -28,3 +30,11 @@ volume = cast(interface, POINTER(IAudioEndpointVolume))
 currentVolumeDb = volume.GetMasterVolumeLevel()
 volume.SetMasterVolumeLevel(currentVolumeDb - 6.0, None)
 # NOTE: -6.0 dB = half volume !
+
+
+# Sets current brightness to 50%
+def set_brightness(value):
+    sbc.fade_brightness(value)
+
+set_brightness(50)
+
