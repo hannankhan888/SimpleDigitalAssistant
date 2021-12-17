@@ -8,7 +8,6 @@ import screen_brightness_control as sbc
 
 # key is the application name (str), value is the rest of the info.
 app_results = {}
-url1 = 'youtube.com'
 
 for key, value in app_results.items():
     print(key, "===>", value)
@@ -18,10 +17,13 @@ chrome_path=re.search("\"(.*?)\"", command).group(1)
 
 print(chrome_path)
 webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(str(chrome_path)))
-webbrowser.get('chrome').open_new_tab(url1)
+def open_url(value):
+    webbrowser.get('chrome').open_new_tab(value)
+open_url('youtube.com')
+open_url('mail.google.com')
 
-import math
-# Get default audio device using PyCAW
+
+
 devices = AudioUtilities.GetSpeakers()
 interface = devices.Activate(
     IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
@@ -29,7 +31,7 @@ volume = cast(interface, POINTER(IAudioEndpointVolume))
 # Get current volume
 currentVolumeDb = volume.GetMasterVolumeLevel()
 volume.SetMasterVolumeLevel(currentVolumeDb - 6.0, None)
-# NOTE: -6.0 dB = half volume !
+# NOTE: -6.0 dB = half volume
 
 
 # Sets current brightness to 50%
