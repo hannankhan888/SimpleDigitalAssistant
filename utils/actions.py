@@ -5,6 +5,7 @@ from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 import screen_brightness_control as sbc
+import os
 
 input_str_1 = "Open Google Chrome"
 input_str_2 = "Open Youtube"
@@ -45,3 +46,12 @@ def set_brightness(value):
 
 
 set_brightness(50)
+
+# Asks user if they want to shut down computer
+shutdown = input("Do you wish to shutdown your computer ? (yes / no): ")
+
+if shutdown == 'no':
+    exit()
+else:
+    os.system("shutdown /s /t 1")
+
