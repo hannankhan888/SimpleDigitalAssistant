@@ -9,13 +9,16 @@ import screen_brightness_control as sbc
 # key is the application name (str), value is the rest of the info.
 app_results = {}
 
-for key, value in app_results.items():
-    print(key, "===>", value)
+
+input_str_1 = "Open Google Chrome"
+input_str_2 = "Open Youtube"
+input_str_3 = "Open Notepad"
+
+url = 'youtube.com'
 
 command = winreg.QueryValueEx(winreg.OpenKey(winreg.HKEY_CLASSES_ROOT, "ChromeHTML\\shell\open\\command", 0, winreg.KEY_READ), "")[0]
-chrome_path=re.search("\"(.*?)\"", command).group(1)
+chrome_path = re.search("\"(.*?)\"", command).group(1)
 
-print(chrome_path)
 webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(str(chrome_path)))
 def open_url(value):
     webbrowser.get('chrome').open_new_tab(value)
