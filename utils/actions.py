@@ -6,26 +6,26 @@ from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 import screen_brightness_control as sbc
 
-# key is the application name (str), value is the rest of the info.
-app_results = {}
-
-
 input_str_1 = "Open Google Chrome"
 input_str_2 = "Open Youtube"
 input_str_3 = "Open Notepad"
 
 url = 'youtube.com'
 
-command = winreg.QueryValueEx(winreg.OpenKey(winreg.HKEY_CLASSES_ROOT, "ChromeHTML\\shell\open\\command", 0, winreg.KEY_READ), "")[0]
+command = \
+    winreg.QueryValueEx(winreg.OpenKey(winreg.HKEY_CLASSES_ROOT, "ChromeHTML\\shell\open\\command", 0, winreg.KEY_READ),
+                        "")[0]
 chrome_path = re.search("\"(.*?)\"", command).group(1)
 
 webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(str(chrome_path)))
+
+
 def open_url(value):
     webbrowser.get('chrome').open_new_tab(value)
+
+
 open_url('youtube.com')
 open_url('mail.google.com')
-
-
 
 devices = AudioUtilities.GetSpeakers()
 interface = devices.Activate(
@@ -34,6 +34,8 @@ volume = cast(interface, POINTER(IAudioEndpointVolume))
 # Get current volume
 currentVolumeDb = volume.GetMasterVolumeLevel()
 volume.SetMasterVolumeLevel(currentVolumeDb - 6.0, None)
+
+
 # NOTE: -6.0 dB = half volume
 
 
@@ -41,5 +43,5 @@ volume.SetMasterVolumeLevel(currentVolumeDb - 6.0, None)
 def set_brightness(value):
     sbc.fade_brightness(value)
 
-set_brightness(50)
 
+set_brightness(50)
