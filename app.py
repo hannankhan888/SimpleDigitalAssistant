@@ -1,7 +1,6 @@
 import sys
-from PyQt5.QtWidgets import *
-from utils.actions import curr_time_date
-
+from PyQt5.QtWidgets import QMainWindow, QApplication, QDesktopWidget, QFrame
+from PyQt5.QtWidgets import QHBoxLayout, QLabel
 
 
 class RootWindow(QMainWindow):
@@ -20,8 +19,7 @@ class RootWindow(QMainWindow):
         self.qtRectangle.moveCenter(self.centerPoint)
         self.move(self.qtRectangle.topLeft())
 
-
-        #create a main frame for overall layout
+        # create a main frame for overall layout
         self.main_frame = QFrame()
 
         self.main_frame_layout = QHBoxLayout()
@@ -29,7 +27,8 @@ class RootWindow(QMainWindow):
         self.setWindowTitle("SimpleDigitalAssistant")
 
         self.welcome_label = QLabel()
-        self.welcome_label.setText("Welcome to your digital assistant, MAX! the current time and date is %s" % curr_time_date)
+        self.welcome_label.setText(
+            "Welcome to your digital assistant, MAX!")
 
         self.main_frame_layout.addWidget(self.welcome_label)
         self.main_frame.setLayout(self.main_frame_layout)
