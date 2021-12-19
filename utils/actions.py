@@ -13,6 +13,7 @@ import re
 from dateutil.parser import parse
 import concurrent.futures
 import pandas as pd
+from word2number import w2n
 
 #
 # curr_time_date= datetime.datetime.now()
@@ -291,41 +292,85 @@ import pandas as pd
 # movieDf.to_csv('file.csv', index=False)
 # #movieDf.head()
 #
+#
+#
+# # Web scraping Wikipedia
+# paras = []
+# try:
+#     user_request = input("enter what you want to know: ")
+#     response = requests.get(url="https://en.wikipedia.org/wiki/" + user_request)
+#     # print(response.status_code)
+#
+#     soup = BeautifulSoup(response.content, 'lxml')
+#     title = soup.find(id="firstHeading")
+#     print(title.string)
+#
+#     body = soup.find(id="mw-content-text").findAll("p")
+#
+#
+#     paragraph = body[1].get_text()
+#     last_char = paragraph[-1]
+#
+#     print('Last character : '+ body[1].get_text())
+#     #print(body[2].get_text())
+#     if last_char != '.':
+#         print(body[1].get_text())
+#         print('Last character : ', last_char)
+#     elif paragraph == "\n":
+#         paragraph = body[2].get_text()
+#         last_char = paragraph[-2]
+#         print(body[2].get_text())
+#     else:
+#         last_char = paragraph[-2]
+#         body2 = soup.find(id="mw-content-text").find("ul").findAll("li")
+#         for bullets in body2:
+#             print(bullets.get_text())
+#
+#
+#
+# except:
+#     print("The word was not found")
+#
+
+# Python3 code to demonstrate working of
+# Convert numeric words to numbers
+# Using join() + split()
+
+user_math = "five times five times three"
+equation = user_math.split()
+operators = {'plus' : '+' , 'minus' : '-', 'addition': '+' , 'times' : '*' , 'multiplied by': '*', 'divided by': '/'}
+
+for operator in operators.keys():
+    if operator in equation:
+        op = equation.index(operator)
+        first_number = equation[0:op]
+        last_number = equation[op+1:]
+        break
 
 
-# Web scraping Wikipedia
-paras = []
-try:
-    user_request = input("enter what you want to know: ")
-    response = requests.get(url="https://en.wikipedia.org/wiki/" + user_request)
-    # print(response.status_code)
+def listToString(s):
+    # initialize an empty string
+    str1 = ""
 
-    soup = BeautifulSoup(response.content, 'lxml')
-    title = soup.find(id="firstHeading")
-    print(title.string)
+    # traverse in the string
+    for ele in s:
+        str1 += ele + " "
 
-    body = soup.find(id="mw-content-text").findAll("p")
+        # return string
+    return str1
 
 
-    paragraph = body[1].get_text()
-    last_char = paragraph[-1]
+# Driver code
+first_operand = listToString(first_number)
+last_operand = listToString(last_number)
+print(first_operand)
+print(last_operand)
 
-    print('Last character : '+ body[1].get_text())
-    #print(body[2].get_text())
-    if last_char != '.':
-        print(body[1].get_text())
-        print('Last character : ', last_char)
-    elif paragraph == "\n":
-        paragraph = body[2].get_text()
-        last_char = paragraph[-2]
-        print(body[2].get_text())
-    else:
-        last_char = paragraph[-2]
-        body2 = soup.find(id="mw-content-text").find("ul").findAll("li")
-        for bullets in body2:
-            print(bullets.get_text())
-
-
-
-except:
-    print("The word was not found")
+oper = equation[op]
+print(op)
+print(operators[oper])
+multiplication = eval(str(w2n.word_to_num(first_operand)) + str(operators[oper]) + str(w2n.word_to_num(last_operand)))
+print(multiplication)
+print(str(w2n.word_to_num(first_operand)))
+print(str(operators[oper]))
+print(str(w2n.word_to_num(last_operand)))
