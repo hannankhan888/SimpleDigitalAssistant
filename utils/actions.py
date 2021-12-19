@@ -65,8 +65,8 @@ import pandas as pd
 #     exit()
 # else:
 #     os.system("shutdown /s /t 1")
-
-
+#
+#
 # # Code for Web Scraping. This is for IMDB
 #
 # MAX_THREADS = 50
@@ -221,7 +221,6 @@ import pandas as pd
 #
 #
 #
-#
 # MAX_THREADS = 50
 # TitleofPage = []
 # First_Paragraph = []
@@ -306,12 +305,5 @@ title = soup.find(id="firstHeading")
 print(title.string)
 
 body = soup.find(id="mw-content-text").findAll("p")
-print(body[1])
 
- def clean_html(body[1]):
-    clean = re.compile('<.*?>')
-    return re.sub(clean, '', text)
-
-
-
-
+print(body[1].get_text())
