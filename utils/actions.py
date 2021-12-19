@@ -301,13 +301,16 @@ user_request = input("enter what you want to know: ")
 response = requests.get(url="https://en.wikipedia.org/wiki/" + user_request)
 print(response.status_code)
 
-soup = BeautifulSoup(response.content, 'html.parser')
+soup = BeautifulSoup(response.content, 'lxml')
 title = soup.find(id="firstHeading")
 print(title.string)
 
 body = soup.find(id="mw-content-text").findAll("p")
 print(body[1])
 
+def clean_html(body[1]):
+    clean = re.compile('<.*?>')
+    return re.sub(clean, '', text)
 
 
 
