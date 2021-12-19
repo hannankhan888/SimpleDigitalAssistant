@@ -9,6 +9,7 @@ import os
 import datetime
 import requests
 from bs4 import BeautifulSoup
+import re
 from dateutil.parser import parse
 import concurrent.futures
 import pandas as pd
@@ -306,6 +307,8 @@ print(title.string)
 
 body = soup.find(id="mw-content-text").findAll("p")
 print(body[1])
+
+
 
 
 
