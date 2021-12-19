@@ -307,11 +307,11 @@ print(title.string)
 
 body = soup.find(id="mw-content-text").findAll("p")
 print(body[1])
-
-def clean_html(body[1]):
-    clean = re.compile('<.*?>')
-    return re.sub(clean, '', text)
-
+#
+# def clean_html(body[1]):
+#     clean = re.compile('<.*?>')
+#     return re.sub(clean, '', text)
+#
 
 
 
