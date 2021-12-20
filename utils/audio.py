@@ -44,17 +44,17 @@ def get_time_stretched_audio(audio_arr, time_stretch_factors):
     return time_stretch_outputs
 
 
-def augment_audio_file(path, sample_rate):
+def augment_audio_file(path, sample_rate) -> ():
     """Augments an audio .wav file.
 
     :param path: file path.
     :param p: the probability with which a transformation will be applied.
     :param sample_rate: the rate at which the audio file is to be sampled.
 
-    :returns a tuple containing
+    :returns a tuple containing the noisy, pitched, stretched, and shifted arrays.
     """
     # we get the audio arr from the wav file.
-    audio_arr, sample_rate = get_16k_sampled_audio_arr(path, 16000)
+    audio_arr, sample_rate = get_16k_sampled_audio_arr(path, sample_rate)
 
     augment_noise = Compose([
         AddGaussianNoise(min_amplitude=0.001, max_amplitude=0.015, p=1)
