@@ -2,3 +2,4 @@
 *.iml
 /.idea/*.iml
 /venv/
+.idea/
