@@ -15,6 +15,7 @@ import concurrent.futures
 import pandas as pd
 from word2number import w2n
 
+
 #
 # curr_time_date= datetime.datetime.now()
 # print ("Current date and time = %s" % curr_time_date)
@@ -67,8 +68,8 @@ from word2number import w2n
 # else:
 #     os.system("shutdown /s /t 1")
 #
-#
-# # Code for Web Scraping. This is for IMDB
+
+# Code for Web Scraping. This is for IMDB
 #
 # MAX_THREADS = 50
 # movie_title_arr = []
@@ -191,28 +192,8 @@ from word2number import w2n
 # #movieDf.head()
 #
 #
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
+
+
 #
 #
 #
@@ -336,18 +317,6 @@ from word2number import w2n
 # Convert numeric words to numbers
 # Using join() + split()
 
-user_math = "five times five times three"
-equation = user_math.split()
-operators = {'plus' : '+' , 'minus' : '-', 'addition': '+' , 'times' : '*' , 'multiplied by': '*', 'divided by': '/'}
-
-for operator in operators.keys():
-    if operator in equation:
-        op = equation.index(operator)
-        first_number = equation[0:op]
-        last_number = equation[op+1:]
-        break
-
-
 def listToString(s):
     # initialize an empty string
     str1 = ""
@@ -361,13 +330,48 @@ def listToString(s):
 
 
 # Driver code
-first_operand = listToString(first_number)
-last_operand = listToString(last_number)
-print(first_operand)
-print(last_operand)
+# first_operand = listToString(first_number)
+# last_operand = listToString(last_number)
+# print("first_operand:", first_operand)
+# print("last_operand:", last_operand)
 
-oper = equation[op]
-print(op)
-print(operators[oper])
-answer = eval(str(w2n.word_to_num(first_operand)) + str(operators[oper]) + str(w2n.word_to_num(last_operand)))
-print(answer)
+def string_to_equation_answer(eq_str: str) -> str:
+    operators = {'plus': '+', 'minus': '-', 'addition': '+', 'times': '*', 'multiplied': '*', 'divide': '/',
+                 'divided': '/'}
+    first_number = None
+    last_number = None
+    op_idx = None
+    last_operand = None
+
+    equation_list = eq_str.split()
+
+    for operator in operators.keys():
+        if operator in equation_list:
+
+            if (operator == 'multiplied') | (operator == 'divided'):
+                op_idx = equation_list.index(operator)
+                first_number = equation_list[0:op_idx]
+                last_number = equation_list[op_idx + 2:]
+            else:
+                op_idx = equation_list.index(operator)
+                first_number = equation_list[0:op_idx]
+                last_number = equation_list[op_idx + 1:]
+            break
+
+    first_operand = listToString(first_number)
+    if len(last_number) > 1:
+        last_number = string_to_equation_answer(listToString(last_number))
+        last_operand = (str(last_number))
+        oper = equation_list[op_idx]
+        answer = eval(str(w2n.word_to_num(first_operand)) + str(operators[oper]) + str(last_operand))
+    else:
+        last_operand = listToString(last_number)
+        oper = equation_list[op_idx]
+        answer = eval(str(w2n.word_to_num(first_operand)) + str(operators[oper]) + str(w2n.word_to_num(last_operand)))
+
+    return answer
+
+
+eq_str = "seven minus one minus two multiplied by three"
+
+print(string_to_equation_answer(eq_str))
