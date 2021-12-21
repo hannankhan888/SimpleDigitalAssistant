@@ -1,7 +1,7 @@
 import sys
 
 from PyQt5 import QtWidgets, QtGui
-from PyQt5.QtGui import QFont, QFontDatabase
+from PyQt5.QtGui import QFont, QFontDatabase, QPixmap, QImage
 from PyQt5.QtWidgets import QMainWindow, QApplication, QDesktopWidget, QFrame, QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout, QLabel
 from PyQt5.QtCore import Qt
@@ -31,8 +31,8 @@ class RootWindow(QMainWindow):
         # create a font database, and load the custom Lato-Thin font
         self.font_database = QFontDatabase()
         self.lato_font_id = self.font_database.addApplicationFont("resources/fonts/Lato-Light.ttf")
-        self.font_family = self.font_database.applicationFontFamilies(self.lato_font_id).__getitem__(0)
-        self.current_font = QFont(self.font_family, 20)
+        self.lato_font_family = self.font_database.applicationFontFamilies(self.lato_font_id).__getitem__(0)
+        self.current_font = QFont(self.lato_font_family, 20)
 
         self._init_colors()
 
@@ -47,6 +47,13 @@ class RootWindow(QMainWindow):
         self.main_frame_layout.setSpacing(0)
         self.main_frame_layout.setContentsMargins(0, 5, 0, 0)
         self.main_frame_layout.setAlignment(Qt.AlignTop)
+
+        self.bottom_main_frame = QFrame()
+        self.bottom_main_frame_layout = QHBoxLayout()
+        self.bottom_main_frame_layout.setSpacing(50)
+        self.bottom_main_frame_layout.setContentsMargins(10, 70, 10, 10)
+        self.bottom_main_frame_layout.setAlignment(Qt.AlignLeft)
+
         self.setWindowTitle(self.app_name)
 
         self.welcome_label = QLabel()
@@ -54,11 +61,19 @@ class RootWindow(QMainWindow):
         self.welcome_label.setStyleSheet("""
         QLabel { rgb (88, 105, 126); }
         """)
+        self.welcome_label.setWordWrap(True)
         self.welcome_label.setText(
-            "Welcome to your digital assistant,\nMAX!")
+            "Welcome to your digital assistant, MAX!")
+
+        self.mic_label = QLabel()
+        self.mic_icon_pix_map = QPixmap("resources/images/mic_normal_icon.png").scaled(350, 350)
+        self.mic_label.setPixmap(self.mic_icon_pix_map)
 
         self._init_window_frame()
-        self.main_frame_layout.addWidget(self.welcome_label)
+        self.bottom_main_frame_layout.addWidget(self.welcome_label)
+        self.bottom_main_frame_layout.addWidget(self.mic_label)
+        self.bottom_main_frame.setLayout(self.bottom_main_frame_layout)
+        self.main_frame_layout.addWidget(self.bottom_main_frame)
         self.main_frame.setLayout(self.main_frame_layout)
 
         self.setCentralWidget(self.main_frame)
@@ -83,7 +98,7 @@ class RootWindow(QMainWindow):
 
     def _init_window_frame(self):
         self.window_frame = QtWidgets.QFrame()
-        self.window_frame.setFixedHeight(40)
+        self.window_frame.setFixedHeight(60)
         """ Window_frame will have two sub frames, one for the left half, includes the
         icon and name, and one for the right half, includes the close and minimize
         buttons."""
@@ -97,28 +112,32 @@ class RootWindow(QMainWindow):
         self.wf_left_layout = QtWidgets.QHBoxLayout()
         self.wf_left_layout.setSpacing(0)
         self.wf_left_layout.setContentsMargins(8, 0, 0, 0)
-        self.wf_left_layout.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+        self.wf_left_layout.setAlignment(Qt.AlignLeft)
         self.wf_right_layout = QtWidgets.QHBoxLayout()
         self.wf_right_layout.setSpacing(0)
         self.wf_right_layout.setContentsMargins(0, 0, 0, 0)
-        self.wf_right_layout.setAlignment(Qt.AlignRight | Qt.AlignTop)
+        self.wf_right_layout.setAlignment(Qt.AlignRight)
 
         self.app_name_label = CustomButton(self.about)
         self.app_name_label.setText(self.app_name)
+        self.app_name_label.setFont(QFont(self.lato_font_family, 10))
         self.app_name_label.set_all_colors(self.normal_bg, self.highlight_bg, self.normal_color,
                                            self.highlight_color)
+        # self.app_name_label.setText()
         self.wf_left_layout.addWidget(self.app_name_label)
 
         self.minimize_button_label = CustomButton(self.minimize_app)
         self.minimize_button_label.set_all_colors(self.normal_bg, self.highlight_bg, self.normal_color,
                                                   self.highlight_color)
-        self.minimize_button_label.setText(" _ ")
+        self.minimize_button_label.setText("  _  ")
+        self.minimize_button_label.setFont(QFont(self.lato_font_family, 10))
         self.wf_right_layout.addWidget(self.minimize_button_label)
 
         self.close_button_label = CustomButton(self.exit_app)
         self.close_button_label.set_all_colors(self.normal_bg, self.highlight_bg, self.normal_color,
                                                self.highlight_color)
-        self.close_button_label.setText(" / ")
+        self.close_button_label.setText("  /  ")
+        self.close_button_label.setFont(QFont(self.lato_font_family, 10))
         self.wf_right_layout.addWidget(self.close_button_label)
 
         self.window_frame_left.setLayout(self.wf_left_layout)
