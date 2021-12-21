@@ -1,12 +1,15 @@
+import time
 import winreg
 import re
 import webbrowser
 from ctypes import cast, POINTER
+
+import gtts
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 import screen_brightness_control as sbc
 import os
-import datetime
+from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 import re
@@ -16,13 +19,27 @@ import pandas as pd
 from word2number import w2n
 from gtts import gTTS
 import os
+from playsound import playsound
 import winsound
-
+import multiprocessing
+from pydub import AudioSegment
 
 #
-# curr_time_date= datetime.datetime.now()
+
+curr_time_date = datetime.now()
+current_time = curr_time_date.strftime("%H:%M:%S")
+hours = curr_time_date.strftime("%H")
+minutes = curr_time_date.strftime("%M")
+AM_PM = curr_time_date.strftime("%p")
+language = 'en'
+
+output = gTTS(text=str('The time is'+hours + " " + minutes + " " + AM_PM + " "), lang=language, slow=False)
+output.save("timeanddate.mp3")
+sound = AudioSegment.from_mp3("timeanddate.mp3")
+sound.export("timeanddate.wav", format="wav")
+winsound.PlaySound("timeanddate.wav", winsound.SND_FILENAME | winsound.SND_ASYNC)
 # print ("Current date and time = %s" % curr_time_date)
-#
+
 # input_str_1 = "Open Google Chrome"
 # input_str_2 = "Open Youtube"
 # input_str_3 = "Open Notepad"
@@ -291,25 +308,22 @@ try:
 
     body = soup.find(id="mw-content-text").findAll("p")
 
-
     paragraph = body[1].get_text()
     last_char = paragraph[-1]
 
-    #print(body[2].get_text())
+    # print(body[2].get_text())
     if last_char != '.':
         print(body[1].get_text())
+
         language = 'en'
-        output = gTTS(text = body[1].get_text(), lang = language, slow= False)
-        output.save("wikiTTS.wav")
-        winsound.PlaySound("wikiTTS.wav", winsound.SND_FILENAME)
+        output = gTTS(text=body[1].get_text(), lang=language, slow=False)
+
     elif paragraph == "\n":
         paragraph = body[2].get_text()
         last_char = paragraph[-2]
         print(body[2].get_text())
         language = 'en'
-        output = gTTS(text = body[1].get_text(), lang = language, slow= False)
-        output.save("wikiTTS.wav")
-        winsound.PlaySound("wikiTTS.wav", winsound.SND_FILENAME)
+        output = gTTS(body[2].get_text(), lang=language, slow=False)
     else:
         last_char = paragraph[-2]
         body2 = soup.find(id="mw-content-text").find("ul").findAll("li")
@@ -317,21 +331,13 @@ try:
             print(bullets.get_text())
             language = 'en'
             output = gTTS(text=bullets.get_text(), lang=language, slow=False)
-            output.save("wikiTTS.wav")
-            winsound.PlaySound("wikiTTS.wav", winsound.SND_FILENAME)
 
-
-
-
-
-
-
-
-
-
-
-
-
+    output.save("wikiTTS.mp3")
+    sound = AudioSegment.from_mp3("wikiTTS.mp3")
+    sound.export("wikiTTS.wav", format="wav")
+    winsound.PlaySound("wikiTTS.wav", winsound.SND_FILENAME | winsound.SND_ASYNC)
+    input("Press ENTER to stop the audio ")
+    winsound.PlaySound(None, winsound.SND_PURGE)
 
 
 
@@ -399,13 +405,25 @@ eq_str = "seven minus one minus two multiplied by three"
 
 print(string_to_equation_answer(eq_str))
 
-
-
-
-
-
-
-
-
-
-
+# #
+# import multiprocessing
+# from threading import Thread
+#
+# from playsound import playsound
+#
+#
+# # p = multiprocessing.Process(target=playsound, args=("wikiTTS.mp3"))
+# # p.start()
+# # play = playsound("wikiTTS.mp3")
+# def play():
+#     playsound("wikiTTS.mp3", block=False)
+#
+#
+# # T = Thread(target=play) # create thread
+# # T.start() # Launch created threa
+# p = multiprocessing.Process(target=play)
+# p.start()
+# i = input("Enter enter to enter")
+# if i == " ":
+#     p.kill()
+winsound.PlaySound('wikiTTS.wav', winsound.SND_ASYNC)
