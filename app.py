@@ -6,7 +6,6 @@ from PyQt5.QtWidgets import QMainWindow, QApplication, QDesktopWidget, QFrame, Q
 from PyQt5.QtWidgets import QHBoxLayout, QLabel
 from PyQt5.QtCore import Qt
 from utils.dynamicPyQt5Labels import CustomButton
-from utils.framelessDialog import FramelessDialog
 
 
 class RootWindow(QMainWindow):
