@@ -14,6 +14,9 @@ from dateutil.parser import parse
 import concurrent.futures
 import pandas as pd
 from word2number import w2n
+from gtts import gTTS
+import os
+import winsound
 
 
 #
@@ -273,49 +276,69 @@ from word2number import w2n
 # movieDf.to_csv('file.csv', index=False)
 # #movieDf.head()
 #
-#
-#
-# # Web scraping Wikipedia
-# paras = []
-# try:
-#     user_request = input("enter what you want to know: ")
-#     response = requests.get(url="https://en.wikipedia.org/wiki/" + user_request)
-#     # print(response.status_code)
-#
-#     soup = BeautifulSoup(response.content, 'lxml')
-#     title = soup.find(id="firstHeading")
-#     print(title.string)
-#
-#     body = soup.find(id="mw-content-text").findAll("p")
-#
-#
-#     paragraph = body[1].get_text()
-#     last_char = paragraph[-1]
-#
-#     print('Last character : '+ body[1].get_text())
-#     #print(body[2].get_text())
-#     if last_char != '.':
-#         print(body[1].get_text())
-#         print('Last character : ', last_char)
-#     elif paragraph == "\n":
-#         paragraph = body[2].get_text()
-#         last_char = paragraph[-2]
-#         print(body[2].get_text())
-#     else:
-#         last_char = paragraph[-2]
-#         body2 = soup.find(id="mw-content-text").find("ul").findAll("li")
-#         for bullets in body2:
-#             print(bullets.get_text())
-#
-#
-#
-# except:
-#     print("The word was not found")
-#
 
-# Python3 code to demonstrate working of
-# Convert numeric words to numbers
-# Using join() + split()
+
+# Web scraping Wikipedia
+paras = []
+try:
+    user_request = input("enter what you want to know: ")
+    response = requests.get(url="https://en.wikipedia.org/wiki/" + user_request)
+    # print(response.status_code)
+
+    soup = BeautifulSoup(response.content, 'lxml')
+    title = soup.find(id="firstHeading")
+    print(title.string)
+
+    body = soup.find(id="mw-content-text").findAll("p")
+
+
+    paragraph = body[1].get_text()
+    last_char = paragraph[-1]
+
+    #print(body[2].get_text())
+    if last_char != '.':
+        print(body[1].get_text())
+        language = 'en'
+        output = gTTS(text = body[1].get_text(), lang = language, slow= False)
+        output.save("wikiTTS.wav")
+        winsound.PlaySound("wikiTTS.wav", winsound.SND_FILENAME)
+    elif paragraph == "\n":
+        paragraph = body[2].get_text()
+        last_char = paragraph[-2]
+        print(body[2].get_text())
+        language = 'en'
+        output = gTTS(text = body[1].get_text(), lang = language, slow= False)
+        output.save("wikiTTS.wav")
+        winsound.PlaySound("wikiTTS.wav", winsound.SND_FILENAME)
+    else:
+        last_char = paragraph[-2]
+        body2 = soup.find(id="mw-content-text").find("ul").findAll("li")
+        for bullets in body2:
+            print(bullets.get_text())
+            language = 'en'
+            output = gTTS(text=bullets.get_text(), lang=language, slow=False)
+            output.save("wikiTTS.wav")
+            winsound.PlaySound("wikiTTS.wav", winsound.SND_FILENAME)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+except:
+    print("The word was not found")
+
 
 def listToString(s):
     # initialize an empty string
@@ -375,3 +398,14 @@ def string_to_equation_answer(eq_str: str) -> str:
 eq_str = "seven minus one minus two multiplied by three"
 
 print(string_to_equation_answer(eq_str))
+
+
+
+
+
+
+
+
+
+
+
