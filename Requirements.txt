@@ -1,7 +1,7 @@
 future~=0.18.2
 pyqt5~=5.15.6
 screen_brightness_control
-pycaw~=20181226
+pycaw
 librosa~=0.8.1
 ffmpeg
 scipy~=1.7.1
