@@ -201,8 +201,9 @@ class RootWindow(QMainWindow):
 
         about_dialog = FramelessDialog(self,
                                        "Created by Hannan Khan, Salman Nazir,\nReza Mohideen, and Ali Abdul-Hameed.",
-                                       self.normal_bg, self.highlight_bg, self.normal_color,
-                                       self.highlight_color, "About", self.current_font)
+                                       self.normal_bg, self.minimize_button_label_highlight_bg, self.normal_color,
+                                       self.highlight_color, self.close_button_label_highlight_bg,
+                                       self.close_button_label_highlight_color, "About", QFont(self.lato_font_family, 15))
 
         github_label = QtWidgets.QLabel()
         github_label.setFont(self.current_font)
@@ -212,7 +213,7 @@ class RootWindow(QMainWindow):
         github_label.setOpenExternalLinks(True)
 
         # TODO: add a self.license_box() to display the license in the app.
-        license_label = CustomButton(self.license, self.normal_bg, self.highlight_bg,
+        license_label = CustomButton(self.license, self.normal_bg, self.minimize_button_label_highlight_bg,
                                      self.normal_color, self.highlight_color)
         license_label.setFont(self.current_font)
         license_label.setText("License")

@@ -31,7 +31,9 @@ class FramelessDialog(QtWidgets.QDialog):
 
     def __init__(self, master: QMainWindow = None, message: str = "", normal_bg: QtGui.QColor = None,
                  highlight_bg: QtGui.QColor = None, normal_color: QtGui.QColor = None,
-                 highlight_color: QtGui.QColor = None, window_title: str = "", current_font: QtGui.QFont = None):
+                 highlight_color: QtGui.QColor = None, close_button_highlight_bg: QtGui.QColor = None,
+                 close_button_highlight_color: QtGui.QColor = None, window_title: str = "",
+                 current_font: QtGui.QFont = None):
         super(FramelessDialog, self).__init__()
         self.setWindowFlag(Qt.FramelessWindowHint)
 
@@ -41,6 +43,8 @@ class FramelessDialog(QtWidgets.QDialog):
         self.highlight_bg = highlight_bg
         self.normal_color = normal_color
         self.highlight_color = highlight_color
+        self.close_button_highlight_bg = close_button_highlight_bg
+        self.close_button_highlight_color = close_button_highlight_color
         self.window_title = window_title
         self.current_font = current_font
         self.mousePressPos = None
@@ -104,7 +108,8 @@ class FramelessDialog(QtWidgets.QDialog):
         self.wf_right_layout.setContentsMargins(0, 2, 2, 0)
 
         self.close_button_label = CustomButton(self.exit_window, self.normal_bg,
-                                               self.highlight_bg, self.normal_color, self.highlight_color)
+                                               self.close_button_highlight_bg, self.normal_color,
+                                               self.close_button_highlight_color)
         self.close_button_label.setFont(self.current_font)
         self.close_button_label.setText(" / ")
         self.wf_right_layout.addWidget(self.close_button_label)
