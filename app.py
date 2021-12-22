@@ -5,7 +5,7 @@ from PyQt5.QtGui import QFont, QFontDatabase
 from PyQt5.QtWidgets import QMainWindow, QApplication, QDesktopWidget, QFrame, QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout, QLabel
 from PyQt5.QtCore import Qt
-from utils.dynamicPyQt5Labels import CustomButton, LabelButton
+from utils.dynamicPyQt5Labels import CustomButton
 from utils.dynamicPyQt5Labels import ImageChangingLabel, ImageBackgroundChangingLabel
 from utils.framelessDialog import FramelessDialog
 
@@ -203,7 +203,8 @@ class RootWindow(QMainWindow):
                                        "Created by Hannan Khan, Salman Nazir,\nReza Mohideen, and Ali Abdul-Hameed.",
                                        self.normal_bg, self.minimize_button_label_highlight_bg, self.normal_color,
                                        self.highlight_color, self.close_button_label_highlight_bg,
-                                       self.close_button_label_highlight_color, "About", QFont(self.lato_font_family, 15))
+                                       self.close_button_label_highlight_color, "About",
+                                       QFont(self.lato_font_family, 15))
 
         github_label = QtWidgets.QLabel()
         github_label.setFont(self.current_font)
@@ -242,16 +243,18 @@ furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE."""
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE."""
         license_dialog = FramelessDialog(self, license_str, self.normal_bg, self.minimize_button_label_highlight_bg,
                                          self.normal_color, self.highlight_color, self.close_button_label_highlight_bg,
-                                         self.close_button_label_highlight_color, "License", QFont(self.lato_font_family, 12))
+                                         self.close_button_label_highlight_color, "License",
+                                         QFont(self.lato_font_family, 12))
         license_dialog.exec_()
 
     def minimize_app(self):
@@ -272,3 +275,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+f

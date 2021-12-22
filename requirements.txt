@@ -1,0 +1,12 @@
+PyQt5
+screen_brightness_control
+pycaw
+librosa
+ffmpeg
+scipy
+requests
+pandas
+comtypes
+beautifulsoup4
+python-dateutil
+audiomentations

@@ -59,19 +59,19 @@ class ColorChangingLabel(QtWidgets.QLabel):
         """:returns the stylesheet for a label based on if it is highlighted or not."""
 
         if highlighted:
-            styleSheet = """
+            style_sheet = """
             QLabel {
             color: rgba(%s, 255);
             background-color: rgba(%s, 255);
             }""" % (self.get_rgb(self.highlight_color), self.get_rgb(self.highlight_bg))
-            return styleSheet
+            return style_sheet
         elif not highlighted:
-            styleSheet = """
+            style_sheet = """
             QLabel {
             color: rgba(%s, 255);
             background-color: rgba(%s, 255);
             }""" % (self.get_rgb(self.normal_color), self.get_rgb(self.normal_bg))
-            return styleSheet
+            return style_sheet
 
 
 class ImageChangingLabel(QtWidgets.QLabel):

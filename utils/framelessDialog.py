@@ -161,19 +161,19 @@ class FramelessDialog(QtWidgets.QDialog):
         green = str(self.normal_bg.green())
         blue = str(self.normal_bg.blue())
         rgb_portion = "".join([red, ", ", green, ", ", blue])
-        styleSheet = ""
+        style_sheet = ""
         if for_frame:
-            styleSheet = """
+            style_sheet = """
             QFrame{
             background-color: rgba(%s,255);
             }""" % rgb_portion
         if for_dialog:
-            styleSheet = """
+            style_sheet = """
                         QDialog{
                         background-color: rgba(%s,255);
                         border: 1px solid white;
                         }""" % rgb_portion
-        return styleSheet
+        return style_sheet
 
     def exit_window(self):
         self.close()

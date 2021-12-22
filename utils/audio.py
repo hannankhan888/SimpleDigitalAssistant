@@ -1,7 +1,6 @@
 import librosa
-import winsound
-from scipy.io.wavfile import write
 from audiomentations import Compose, AddGaussianNoise, PitchShift, TimeStretch, Shift
+from scipy.io.wavfile import write
 
 
 def get_16k_sampled_audio_arr(path: str, sample_rate: int):
@@ -45,10 +44,10 @@ def get_time_stretched_audio(audio_arr, time_stretch_factors):
 
 
 def augment_audio_file(path, sample_rate) -> ():
-    """Augments an audio .wav file.
+    """Augments an audio .wav file. There is a parameter p which represents the
+    probability with which a transformation will be applied. Be sure this is set to 1.
 
     :param path: file path.
-    :param p: the probability with which a transformation will be applied.
     :param sample_rate: the rate at which the audio file is to be sampled.
 
     :returns a tuple containing the noisy, pitched, stretched, and shifted arrays.
@@ -86,8 +85,6 @@ def main():
     # audio_arr, sample_rate = get_16k_sampled_audio_arr(path, 16000)
     # print("audio_arr",audio_arr)
     # we set the factors for pitch and time-stretch augmentation:
-    pitch_factors = [1.0, 2.0, 3.0, 4.0]
-    time_stretch_factors = [0.8, 0.9, 1.2, 1.4]
     # now we do the computations
     # pitch_outputs = get_pitched_audio(audio_arr, sample_rate, pitch_factors)
     # time_stretch_outputs = get_time_stretched_audio(audio_arr, time_stretch_factors)
