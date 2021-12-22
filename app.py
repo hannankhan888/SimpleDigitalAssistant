@@ -1,11 +1,11 @@
 import sys
 
-from PyQt5 import QtWidgets, QtGui
+from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtGui import QFont, QFontDatabase, QPixmap, QImage
 from PyQt5.QtWidgets import QMainWindow, QApplication, QDesktopWidget, QFrame, QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout, QLabel
 from PyQt5.QtCore import Qt
-from utils.dynamicPyQt5Labels import CustomButton
+from utils.dynamicPyQt5Labels import CustomButton, LabelButton
 
 
 class RootWindow(QMainWindow):
@@ -15,6 +15,8 @@ class RootWindow(QMainWindow):
         self.WIDTH = 1024
         self.HEIGHT = 576
         self.app_name = "SimpleDigitalAssistant"
+        self.mousePressPos = None
+        self.mouseMovePos = None
 
         self.setFixedWidth(self.WIDTH)
         self.setFixedHeight(self.HEIGHT)
@@ -45,7 +47,7 @@ class RootWindow(QMainWindow):
 
         self.main_frame_layout = QVBoxLayout()
         self.main_frame_layout.setSpacing(0)
-        self.main_frame_layout.setContentsMargins(0, 5, 0, 0)
+        self.main_frame_layout.setContentsMargins(0, 0, 0, 0)
         self.main_frame_layout.setAlignment(Qt.AlignTop)
 
         self.bottom_main_frame = QFrame()
@@ -79,6 +81,27 @@ class RootWindow(QMainWindow):
         self.setCentralWidget(self.main_frame)
         self.show()
 
+    def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
+        self.mousePressPos = None
+        self.mouseMovePos = None
+        if (a0.button() == QtCore.Qt.LeftButton) and self.window_frame.underMouse():
+            self.mousePressPos = a0.globalPos()
+            self.mouseMovePos = a0.globalPos()
+        super(RootWindow, self).mousePressEvent(a0)
+
+    def mouseMoveEvent(self, a0: QtGui.QMouseEvent) -> None:
+        if (a0.buttons() == QtCore.Qt.LeftButton) and (self.window_frame.underMouse()):
+            curr_pos = self.pos()
+            global_pos = a0.globalPos()
+            diff = global_pos - self.mouseMovePos
+            new_pos = curr_pos + diff
+            self.move(new_pos)
+            self.mouseMovePos = global_pos
+        super(RootWindow, self).mouseMoveEvent(a0)
+
+    def mouseReleaseEvent(self, a0: QtGui.QMouseEvent) -> None:
+        super(RootWindow, self).mouseReleaseEvent(a0)
+
     def _init_colors(self):
         # Champagne Pink
         self.normal_bg = QtGui.QColor()
@@ -95,6 +118,18 @@ class RootWindow(QMainWindow):
         # Cadet Grey
         self.highlight_color = QtGui.QColor()
         self.highlight_color.setRgb(141, 157, 175)
+
+        # Grey (american silver) color for minimize button
+        self.minimize_button_label_highlight_bg = QtGui.QColor()
+        self.minimize_button_label_highlight_bg.setRgb(229, 229, 229)
+
+        # Red Color for close button
+        self.close_button_label_highlight_bg = QtGui.QColor()
+        self.close_button_label_highlight_bg.setRgb(255, 87, 51)
+
+        # White color (champagne flute) for close button when highlighted
+        self.close_button_label_highlight_color = QtGui.QColor()
+        self.close_button_label_highlight_color.setRgb(246, 234, 226)
 
     def _init_window_frame(self):
         self.window_frame = QtWidgets.QFrame()
@@ -118,25 +153,32 @@ class RootWindow(QMainWindow):
         self.wf_right_layout.setContentsMargins(0, 0, 0, 0)
         self.wf_right_layout.setAlignment(Qt.AlignRight)
 
-        self.app_name_label = CustomButton(self.about)
+        # self.app_name_label = CustomButton(self.about)
+        self.app_name_label = LabelButton()
+        self.app_name_label.setToolTip("About")
         self.app_name_label.setText(self.app_name)
         self.app_name_label.setFont(QFont(self.lato_font_family, 10))
-        self.app_name_label.set_all_colors(self.normal_bg, self.highlight_bg, self.normal_color,
-                                           self.highlight_color)
+        # self.app_name_label.set_all_colors(self.normal_bg, self.highlight_bg, self.normal_color,
+        #                                    self.highlight_color)
         # self.app_name_label.setText()
         self.wf_left_layout.addWidget(self.app_name_label)
 
+        # self.minimize_button_label = CustomButton(self.minimize_app)
+        # self.minimize_button_label.set_all_colors(self.normal_bg, self.highlight_bg, self.normal_color,
+        #                                           self.highlight_color)
         self.minimize_button_label = CustomButton(self.minimize_app)
-        self.minimize_button_label.set_all_colors(self.normal_bg, self.highlight_bg, self.normal_color,
-                                                  self.highlight_color)
+        self.minimize_button_label.set_all_colors(self.normal_bg, self.minimize_button_label_highlight_bg,
+                                                  self.normal_color, self.highlight_color)
+        self.minimize_button_label.setToolTip("Minimize")
         self.minimize_button_label.setText("  _  ")
         self.minimize_button_label.setFont(QFont(self.lato_font_family, 10))
         self.wf_right_layout.addWidget(self.minimize_button_label)
 
         self.close_button_label = CustomButton(self.exit_app)
-        self.close_button_label.set_all_colors(self.normal_bg, self.highlight_bg, self.normal_color,
-                                               self.highlight_color)
-        self.close_button_label.setText("  /  ")
+        self.close_button_label.setToolTip("Close")
+        self.close_button_label.set_all_colors(self.normal_bg, self.close_button_label_highlight_bg,
+                                               self.normal_color, self.close_button_label_highlight_color)
+        self.close_button_label.setText("   /   ")
         self.close_button_label.setFont(QFont(self.lato_font_family, 10))
         self.wf_right_layout.addWidget(self.close_button_label)
 
@@ -153,19 +195,22 @@ class RootWindow(QMainWindow):
     def about(self):
         """This function takes care of the about dialog."""
 
-        about_dialog = FramelessDialog(self, "Created by Hannan Khan, Salman Nazir,\nReza Mohideen, and Ali Abdul-Hameed.", self.normal_bg, self.highlight_bg,
-                                       self.normal_color, self.highlight_color, "About", self.current_font)
+        about_dialog = FramelessDialog(self,
+                                       "Created by Hannan Khan, Salman Nazir,\nReza Mohideen, and Ali Abdul-Hameed.",
+                                       self.normal_bg, self.highlight_bg, self.normal_color,
+                                       self.highlight_color, "About", self.current_font)
         # if self.always_on_top:
         #     about_dialog.setWindowFlag(Qt.WindowStaysOnTopHint)
 
         github_label = QtWidgets.QLabel()
         github_label.setFont(self.current_font)
-        github_label.setText('<a href="https://github.com/hannankhan888/SimpleDigitalAssistant" style="color: rgba(187, 172, 193, '
-                             '255)">Github</a>')
+        github_label.setText(
+            '<a href="https://github.com/hannankhan888/SimpleDigitalAssistant" style="color: rgba(187, 172, 193, '
+            '255)">Github</a>')
         github_label.setOpenExternalLinks(True)
 
         # TODO: add a self.license_box() to display the license in the app.
-        license_label = CustomButton()
+        license_label = LabelButton()
         license_label.set_all_colors(self.normal_bg, self.highlight_bg, self.normal_color, self.highlight_color)
         license_label.setFont(self.current_font)
         license_label.setText("License")
@@ -173,10 +218,7 @@ class RootWindow(QMainWindow):
 
         about_dialog.middle_frame_layout.addWidget(github_label)
         about_dialog.middle_frame_layout.addWidget(license_label)
-        # self.main_frame_blur.setEnabled(True)
         result = about_dialog.exec_()
-        # if result == 0:
-        #     self.main_frame_blur.setEnabled(False)
 
     def minimize_app(self):
         self.showMinimized()

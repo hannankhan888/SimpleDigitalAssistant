@@ -49,7 +49,7 @@ class FramelessDialog(QtWidgets.QDialog):
         self.setStyleSheet(self.get_style_sheet(for_dialog=True))
         self.main_frame_layout = QtWidgets.QVBoxLayout()
         self.main_frame_layout.setAlignment(Qt.AlignTop | Qt.AlignCenter)
-        self.main_frame_layout.setContentsMargins(0,0,0,0)
+        self.main_frame_layout.setContentsMargins(0, 0, 0, 0)
 
         self._init_window_frame()
         self._init_middle_frame()
@@ -83,12 +83,12 @@ class FramelessDialog(QtWidgets.QDialog):
     def _init_window_frame(self):
         self.window_frame = QtWidgets.QFrame()
         self.window_frame_layout = QtWidgets.QHBoxLayout()
-        self.window_frame_layout.setContentsMargins(0,0,0,0)
+        self.window_frame_layout.setContentsMargins(0, 0, 0, 0)
 
         self.window_frame_left = QtWidgets.QFrame()
         self.wf_left_layout = QtWidgets.QHBoxLayout()
         self.wf_left_layout.setAlignment(Qt.AlignLeft)
-        self.wf_left_layout.setContentsMargins(8,2,0,0)
+        self.wf_left_layout.setContentsMargins(8, 2, 0, 0)
 
         self.window_title_label = ColorChangingLabel(self.normal_bg, self.highlight_bg,
                                                      self.normal_color, self.highlight_color, False)
@@ -101,7 +101,7 @@ class FramelessDialog(QtWidgets.QDialog):
         self.window_frame_right = QtWidgets.QFrame()
         self.wf_right_layout = QtWidgets.QHBoxLayout()
         self.wf_right_layout.setAlignment(Qt.AlignRight)
-        self.wf_right_layout.setContentsMargins(0,2,2,0)
+        self.wf_right_layout.setContentsMargins(0, 2, 2, 0)
 
         self.close_button_label = CustomButton(self.exit_window)
         self.close_button_label.set_all_colors(self.normal_bg, self.highlight_bg, self.normal_color,

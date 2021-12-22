@@ -189,3 +189,28 @@ class CustomButton(ColorChangingLabel):
             if (ev.button() == Qt.LeftButton) and (self.leftButtonClicked is True):
                 self.func()
         super(CustomButton, self).mouseReleaseEvent(ev)
+
+
+class LabelButton(QtWidgets.QLabel):
+    """This class inherits QtWidgets.QLabel. It also has a mousePressEvent, and can
+    invoke a given class method (func) if it is given. This is great for implementing
+    minimalist frameless windows in which the close button will be represented by an
+    ' '/' ' and the minimize button by ' '_' '.
+    """
+
+    def __init__(self, func: classmethod = None):
+        super().__init__()
+        self.leftButtonClicked = False
+        self.func = func
+
+    def mousePressEvent(self, ev: QtGui.QMouseEvent) -> None:
+        self.leftButtonClicked = False
+        if ev.button() == Qt.LeftButton:
+            self.leftButtonClicked = True
+        super(QtWidgets.QLabel, self).mousePressEvent(ev)
+
+    def mouseReleaseEvent(self, ev: QtGui.QMouseEvent) -> None:
+        if self.func:
+            if (ev.button() == Qt.LeftButton) and (self.leftButtonClicked is True):
+                self.func()
+        super(QtWidgets.QLabel, self).mouseReleaseEvent(ev)
