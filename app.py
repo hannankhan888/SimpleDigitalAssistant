@@ -227,6 +227,7 @@ class RootWindow(QMainWindow):
         pass
 
     def license(self):
+
         pass
 
     def minimize_app(self):
