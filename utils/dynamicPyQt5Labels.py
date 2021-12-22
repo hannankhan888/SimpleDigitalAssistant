@@ -11,7 +11,6 @@ __version__ = "1.0"
 __maintainer__ = "Hannan Khan"
 __email__ = "hannankhan888@gmail.com"
 
-
 from PyQt5 import QtGui, QtWidgets, QtCore
 from PyQt5.QtCore import Qt
 
@@ -35,10 +34,7 @@ class ColorChangingLabel(QtWidgets.QLabel):
         self.normal_color = normal_color
         self.highlight_color = highlight_color
         self.highlightable = highlightable
-        self.setStyleSheet("""
-        QLabel{
-        color: rgba(187, 172, 193, 255);
-        }""")
+        self.setStyleSheet(self.get_style_sheet(False))
 
     def enterEvent(self, a0: QtCore.QEvent) -> None:
         if self.highlightable:
@@ -50,58 +46,32 @@ class ColorChangingLabel(QtWidgets.QLabel):
             self.setStyleSheet(self.get_style_sheet(False))
         super(ColorChangingLabel, self).leaveEvent(a0)
 
-    def get_rgb_string(self, idx: int = 0) -> str:
-        """Returns the RGB portion of the string to be used in the styleSheet.
-        idx = 0 means normal bg
-        1 == highlight bg
-        2 == normal color
-        3 == highlight color"""
-
-        if idx == 0:
-            color = QtGui.QColor(self.normal_bg)
-        elif idx == 1:
-            color = QtGui.QColor(self.highlight_bg)
-        elif idx == 2:
-            color = QtGui.QColor(self.normal_color)
-        elif idx == 3:
-            color = QtGui.QColor(self.highlight_color)
-        else:
-            return "Error. Wrong idx value in get_rgb_string"
-
+    @staticmethod
+    def get_rgb(color: QtGui.QColor = None) -> str:
         red = str(color.red())
         green = str(color.green())
         blue = str(color.blue())
+        rgb_str = "".join([red, ", ", green, ", ", blue])
 
-        return "".join([red, ", ", green, ", ", blue])
+        return rgb_str
 
     def get_style_sheet(self, highlighted: bool = False):
         """:returns the stylesheet for a label based on if it is highlighted or not."""
-
-        normal_bg_rgb = self.get_rgb_string(0)
-        highlight_bg_rgb = self.get_rgb_string(1)
-        normal_color_rgb = self.get_rgb_string(2)
-        highlight_color_rgb = self.get_rgb_string(3)
 
         if highlighted:
             styleSheet = """
             QLabel {
             color: rgba(%s, 255);
             background-color: rgba(%s, 255);
-            }""" % (highlight_color_rgb, highlight_bg_rgb)
+            }""" % (self.get_rgb(self.highlight_color), self.get_rgb(self.highlight_bg))
             return styleSheet
         elif not highlighted:
             styleSheet = """
             QLabel {
             color: rgba(%s, 255);
             background-color: rgba(%s, 255);
-            }""" % (normal_color_rgb, normal_bg_rgb)
+            }""" % (self.get_rgb(self.normal_color), self.get_rgb(self.normal_bg))
             return styleSheet
-
-    def set_all_colors(self, normal_bg, highlight_bg, normal_color, highlight_color):
-        self.normal_bg = normal_bg
-        self.highlight_bg = highlight_bg
-        self.normal_color = normal_color
-        self.highlight_color = highlight_color
 
 
 class ImageChangingLabel(QtWidgets.QLabel):
@@ -119,8 +89,8 @@ class ImageChangingLabel(QtWidgets.QLabel):
     its highlighted version until called again. This is great for showing that a label has
     been clicked."""
 
-    def __init__(self, image_1: str = "", image_2: str = "", func: classmethod = None, resized_x: int = 128,
-                 resized_y: int = 128):
+    def __init__(self, image_1: str = "", image_2: str = "", func: callable = None,
+                 resized_x: int = 128, resized_y: int = 128):
         super(ImageChangingLabel, self).__init__()
         self.leftButtonClicked = False
         self.active = False
@@ -170,21 +140,20 @@ class ImageChangingLabel(QtWidgets.QLabel):
 
 class ImageBackgroundChangingLabel(ImageChangingLabel):
     def __init__(self, normal_bg: QtGui.QColor = None, highlight_bg: QtGui.QColor = None,
-                 image_1: str = "", image_2: str = "", func: classmethod = None,
+                 image_1: str = "", image_2: str = "", func: callable = None,
                  resized_x: int = 128, resized_y: int = 128):
-
-        super(ImageBackgroundChangingLabel, self).__init__(image_1, image_2, func,
-                                                           resized_x, resized_y)
+        super(ImageBackgroundChangingLabel, self).__init__(image_1, image_2,
+                                                           func, resized_x, resized_y)
         self.normal_bg = normal_bg
         self.highlight_bg = highlight_bg
 
     def enterEvent(self, a0: QtCore.QEvent) -> None:
         self.setStyleSheet(self.get_style_sheet(self.highlight_bg))
-        super(ImageChangingLabel, self).enterEvent(a0)
+        super(ImageBackgroundChangingLabel, self).enterEvent(a0)
 
     def leaveEvent(self, a0: QtCore.QEvent) -> None:
         self.setStyleSheet(self.get_style_sheet(self.normal_bg))
-        super(ImageChangingLabel, self).leaveEvent(a0)
+        super(ImageBackgroundChangingLabel, self).leaveEvent(a0)
 
     @staticmethod
     def get_style_sheet(background_color: QtGui.QColor = None) -> str:
@@ -207,8 +176,12 @@ class CustomButton(ColorChangingLabel):
     ' '/' ' and the minimize button by ' '_' '.
     This class will also change color, and needs to initialized with color when possible."""
 
-    def __init__(self, func: classmethod = None):
-        super(CustomButton, self).__init__()
+    def __init__(self, func: callable = None, normal_bg: QtGui.QColor = None,
+                 highlight_bg: QtGui.QColor = None, normal_color: QtGui.QColor = None,
+                 highlight_color: QtGui.QColor = None, highlightable: bool = True):
+
+        super(CustomButton, self).__init__(normal_bg, highlight_bg, normal_color,
+                                           highlight_color, highlightable)
         self.leftButtonClicked = False
         self.func = func
 
@@ -232,7 +205,7 @@ class LabelButton(QtWidgets.QLabel):
     ' '/' ' and the minimize button by ' '_' '.
     """
 
-    def __init__(self, func: classmethod = None):
+    def __init__(self, func: callable = None):
         super().__init__()
         self.leftButtonClicked = False
         self.func = func

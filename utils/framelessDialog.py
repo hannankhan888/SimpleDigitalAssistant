@@ -103,9 +103,8 @@ class FramelessDialog(QtWidgets.QDialog):
         self.wf_right_layout.setAlignment(Qt.AlignRight)
         self.wf_right_layout.setContentsMargins(0, 2, 2, 0)
 
-        self.close_button_label = CustomButton(self.exit_window)
-        self.close_button_label.set_all_colors(self.normal_bg, self.highlight_bg, self.normal_color,
-                                               self.highlight_color)
+        self.close_button_label = CustomButton(self.exit_window, self.normal_bg,
+                                               self.highlight_bg, self.normal_color, self.highlight_color)
         self.close_button_label.setFont(self.current_font)
         self.close_button_label.setText(" / ")
         self.wf_right_layout.addWidget(self.close_button_label)
@@ -137,8 +136,8 @@ class FramelessDialog(QtWidgets.QDialog):
         self.bottom_frame_layout = QtWidgets.QHBoxLayout()
         self.bottom_frame_layout.setAlignment(Qt.AlignRight | Qt.AlignBottom)
 
-        self.ok_button_label = CustomButton(func=self.exit_window)
-        self.ok_button_label.set_all_colors(self.normal_bg, self.highlight_bg, self.normal_color, self.highlight_color)
+        self.ok_button_label = CustomButton(self.exit_window, self.normal_bg, self.highlight_bg,
+                                            self.normal_color, self.highlight_color)
         self.ok_button_label.setFont(self.current_font)
         self.ok_button_label.setText("  ok  ")
         self.bottom_frame_layout.addWidget(self.ok_button_label)

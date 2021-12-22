@@ -1,11 +1,13 @@
 import sys
 
 from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtGui import QFont, QFontDatabase, QPixmap, QImage
+from PyQt5.QtGui import QFont, QFontDatabase
 from PyQt5.QtWidgets import QMainWindow, QApplication, QDesktopWidget, QFrame, QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout, QLabel
 from PyQt5.QtCore import Qt
-from utils.dynamicPyQt5Labels import CustomButton, LabelButton, ImageBackgroundChangingLabel
+from utils.dynamicPyQt5Labels import CustomButton, LabelButton
+from utils.dynamicPyQt5Labels import ImageChangingLabel, ImageBackgroundChangingLabel
+from utils.framelessDialog import FramelessDialog
 
 
 class RootWindow(QMainWindow):
@@ -67,9 +69,9 @@ class RootWindow(QMainWindow):
         self.welcome_label.setText(
             "Welcome to your digital assistant, MAX!")
 
-        self.mic_label = QLabel()
-        self.mic_icon_pix_map = QPixmap("resources/images/mic_normal_icon.png").scaled(350, 350)
-        self.mic_label.setPixmap(self.mic_icon_pix_map)
+        self.mic_label = ImageChangingLabel("resources/images/mic_normal_icon.png",
+                                            "resources/images/mic_highlight_icon.png", None,
+                                            350, 350)
 
         self._init_window_frame()
         self.bottom_main_frame_layout.addWidget(self.welcome_label)
@@ -150,35 +152,36 @@ class RootWindow(QMainWindow):
         self.wf_left_layout.setAlignment(Qt.AlignLeft)
         self.wf_right_layout = QtWidgets.QHBoxLayout()
         self.wf_right_layout.setSpacing(0)
-        self.wf_right_layout.setContentsMargins(0, 0, 5, 0)
+        self.wf_right_layout.setContentsMargins(0, 0, 0, 0)
         self.wf_right_layout.setAlignment(Qt.AlignRight)
 
-        # self.app_name_label = CustomButton(self.about)
-        self.app_name_label = LabelButton()
+        self.app_name_label = CustomButton(self.about, self.normal_bg, self.minimize_button_label_highlight_bg,
+                                           self.normal_color, self.highlight_color)
         self.app_name_label.setToolTip("About")
         self.app_name_label.setText(self.app_name)
         self.app_name_label.setFont(QFont(self.lato_font_family, 10))
         self.wf_left_layout.addWidget(self.app_name_label)
 
         self.settings_button_label = ImageBackgroundChangingLabel(self.normal_bg,
-                                                                  self.minimize_button_label_highlight_bg, "resources/images/settings_normal_icon.png",
+                                                                  self.minimize_button_label_highlight_bg,
+                                                                  "resources/images/settings_normal_icon.png",
                                                                   "resources/images/settings_highlight_icon.png",
-                                                                  None, 30, 40)
+                                                                  self.settings, 30, 60)
         self.settings_button_label.setToolTip("Settings")
+        self.settings_button_label.setContentsMargins(0, 0, 5, 0)
         self.wf_right_layout.addWidget(self.settings_button_label)
 
-        self.minimize_button_label = CustomButton(self.minimize_app)
-        self.minimize_button_label.set_all_colors(self.normal_bg, self.minimize_button_label_highlight_bg,
-                                                  self.normal_color, self.highlight_color)
+        self.minimize_button_label = CustomButton(self.minimize_app, self.normal_bg,
+                                                  self.minimize_button_label_highlight_bg, self.normal_color,
+                                                  self.highlight_color)
         self.minimize_button_label.setToolTip("Minimize")
         self.minimize_button_label.setText("  _  ")
         self.minimize_button_label.setFont(QFont(self.lato_font_family, 10))
         self.wf_right_layout.addWidget(self.minimize_button_label)
 
-        self.close_button_label = CustomButton(self.exit_app)
-        self.close_button_label.setToolTip("Close")
-        self.close_button_label.set_all_colors(self.normal_bg, self.close_button_label_highlight_bg,
+        self.close_button_label = CustomButton(self.exit_app, self.normal_bg, self.close_button_label_highlight_bg,
                                                self.normal_color, self.close_button_label_highlight_color)
+        self.close_button_label.setToolTip("Close")
         self.close_button_label.setText("   /   ")
         self.close_button_label.setFont(QFont(self.lato_font_family, 10))
         self.wf_right_layout.addWidget(self.close_button_label)
@@ -200,8 +203,6 @@ class RootWindow(QMainWindow):
                                        "Created by Hannan Khan, Salman Nazir,\nReza Mohideen, and Ali Abdul-Hameed.",
                                        self.normal_bg, self.highlight_bg, self.normal_color,
                                        self.highlight_color, "About", self.current_font)
-        # if self.always_on_top:
-        #     about_dialog.setWindowFlag(Qt.WindowStaysOnTopHint)
 
         github_label = QtWidgets.QLabel()
         github_label.setFont(self.current_font)
@@ -211,20 +212,27 @@ class RootWindow(QMainWindow):
         github_label.setOpenExternalLinks(True)
 
         # TODO: add a self.license_box() to display the license in the app.
-        license_label = LabelButton()
-        license_label.set_all_colors(self.normal_bg, self.highlight_bg, self.normal_color, self.highlight_color)
+        license_label = CustomButton(self.license, self.normal_bg, self.highlight_bg,
+                                     self.normal_color, self.highlight_color)
         license_label.setFont(self.current_font)
         license_label.setText("License")
         license_label.setCursor(Qt.PointingHandCursor)
 
         about_dialog.middle_frame_layout.addWidget(github_label)
         about_dialog.middle_frame_layout.addWidget(license_label)
-        result = about_dialog.exec_()
+        about_dialog.exec_()
+
+    def settings(self):
+        pass
+
+    def license(self):
+        pass
 
     def minimize_app(self):
         self.showMinimized()
 
-    def exit_app(self):
+    @staticmethod
+    def exit_app():
         sys.exit(0)
 
 
