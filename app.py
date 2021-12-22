@@ -5,7 +5,7 @@ from PyQt5.QtGui import QFont, QFontDatabase, QPixmap, QImage
 from PyQt5.QtWidgets import QMainWindow, QApplication, QDesktopWidget, QFrame, QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout, QLabel
 from PyQt5.QtCore import Qt
-from utils.dynamicPyQt5Labels import CustomButton, LabelButton
+from utils.dynamicPyQt5Labels import CustomButton, LabelButton, ImageBackgroundChangingLabel
 
 
 class RootWindow(QMainWindow):
@@ -150,7 +150,7 @@ class RootWindow(QMainWindow):
         self.wf_left_layout.setAlignment(Qt.AlignLeft)
         self.wf_right_layout = QtWidgets.QHBoxLayout()
         self.wf_right_layout.setSpacing(0)
-        self.wf_right_layout.setContentsMargins(0, 0, 0, 0)
+        self.wf_right_layout.setContentsMargins(0, 0, 5, 0)
         self.wf_right_layout.setAlignment(Qt.AlignRight)
 
         # self.app_name_label = CustomButton(self.about)
@@ -158,14 +158,15 @@ class RootWindow(QMainWindow):
         self.app_name_label.setToolTip("About")
         self.app_name_label.setText(self.app_name)
         self.app_name_label.setFont(QFont(self.lato_font_family, 10))
-        # self.app_name_label.set_all_colors(self.normal_bg, self.highlight_bg, self.normal_color,
-        #                                    self.highlight_color)
-        # self.app_name_label.setText()
         self.wf_left_layout.addWidget(self.app_name_label)
 
-        # self.minimize_button_label = CustomButton(self.minimize_app)
-        # self.minimize_button_label.set_all_colors(self.normal_bg, self.highlight_bg, self.normal_color,
-        #                                           self.highlight_color)
+        self.settings_button_label = ImageBackgroundChangingLabel(self.normal_bg,
+                                                                  self.minimize_button_label_highlight_bg, "resources/images/settings_normal_icon.png",
+                                                                  "resources/images/settings_highlight_icon.png",
+                                                                  None, 30, 40)
+        self.settings_button_label.setToolTip("Settings")
+        self.wf_right_layout.addWidget(self.settings_button_label)
+
         self.minimize_button_label = CustomButton(self.minimize_app)
         self.minimize_button_label.set_all_colors(self.normal_bg, self.minimize_button_label_highlight_bg,
                                                   self.normal_color, self.highlight_color)

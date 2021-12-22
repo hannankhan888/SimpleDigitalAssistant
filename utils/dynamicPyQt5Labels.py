@@ -11,8 +11,6 @@ __version__ = "1.0"
 __maintainer__ = "Hannan Khan"
 __email__ = "hannankhan888@gmail.com"
 
-import os
-import sys
 
 from PyQt5 import QtGui, QtWidgets, QtCore
 from PyQt5.QtCore import Qt
@@ -115,7 +113,7 @@ class ImageChangingLabel(QtWidgets.QLabel):
     image which is image_2.
     Otherwise, the ' 'normal' ' image is image_1.
 
-    The images can be resized. The images parameters are the filepaths to the images.
+    The images can be resized. The images parameters are the file paths to the images.
 
     A useful helper function to call is invert_active_state() which will turn the label into
     its highlighted version until called again. This is great for showing that a label has
@@ -128,8 +126,12 @@ class ImageChangingLabel(QtWidgets.QLabel):
         self.active = False
 
         self.func = func
-        self.img_1_pixmap = QtGui.QPixmap(image_1).scaled(resized_x, resized_y, Qt.KeepAspectRatio)
-        self.img_2_pixmap = QtGui.QPixmap(image_2).scaled(resized_x, resized_y, Qt.KeepAspectRatio)
+        self.image_1 = image_1
+        self.image_2 = image_2
+        self.resized_x = resized_x
+        self.resized_y = resized_y
+        self.img_1_pixmap = QtGui.QPixmap(self.image_1).scaled(self.resized_x, self.resized_y, Qt.KeepAspectRatio)
+        self.img_2_pixmap = QtGui.QPixmap(self.image_2).scaled(self.resized_x, self.resized_y, Qt.KeepAspectRatio)
         self.setPixmap(self.img_1_pixmap)
 
     def enterEvent(self, a0: QtCore.QEvent) -> None:
@@ -164,6 +166,38 @@ class ImageChangingLabel(QtWidgets.QLabel):
     def invert_active_state(self):
         self.active = (not self.active)
         self.update()
+
+
+class ImageBackgroundChangingLabel(ImageChangingLabel):
+    def __init__(self, normal_bg: QtGui.QColor = None, highlight_bg: QtGui.QColor = None,
+                 image_1: str = "", image_2: str = "", func: classmethod = None,
+                 resized_x: int = 128, resized_y: int = 128):
+
+        super(ImageBackgroundChangingLabel, self).__init__(image_1, image_2, func,
+                                                           resized_x, resized_y)
+        self.normal_bg = normal_bg
+        self.highlight_bg = highlight_bg
+
+    def enterEvent(self, a0: QtCore.QEvent) -> None:
+        self.setStyleSheet(self.get_style_sheet(self.highlight_bg))
+        super(ImageChangingLabel, self).enterEvent(a0)
+
+    def leaveEvent(self, a0: QtCore.QEvent) -> None:
+        self.setStyleSheet(self.get_style_sheet(self.normal_bg))
+        super(ImageChangingLabel, self).leaveEvent(a0)
+
+    @staticmethod
+    def get_style_sheet(background_color: QtGui.QColor = None) -> str:
+        red = str(background_color.red())
+        green = str(background_color.green())
+        blue = str(background_color.blue())
+        rgb_str = "".join([red, ", ", green, ", ", blue])
+
+        style_sheet = """
+        QLabel { background-color: rgb(%s); }
+        """ % rgb_str
+
+        return style_sheet
 
 
 class CustomButton(ColorChangingLabel):
