@@ -276,42 +276,8 @@ from word2number import w2n
 #
 #
 # # Web scraping Wikipedia
-# paras = []
-# try:
-#     user_request = input("enter what you want to know: ")
-#     response = requests.get(url="https://en.wikipedia.org/wiki/" + user_request)
-#     # print(response.status_code)
-#
-#     soup = BeautifulSoup(response.content, 'lxml')
-#     title = soup.find(id="firstHeading")
-#     print(title.string)
-#
-#     body = soup.find(id="mw-content-text").findAll("p")
-#
-#
-#     paragraph = body[1].get_text()
-#     last_char = paragraph[-1]
-#
-#     print('Last character : '+ body[1].get_text())
-#     #print(body[2].get_text())
-#     if last_char != '.':
-#         print(body[1].get_text())
-#         print('Last character : ', last_char)
-#     elif paragraph == "\n":
-#         paragraph = body[2].get_text()
-#         last_char = paragraph[-2]
-#         print(body[2].get_text())
-#     else:
-#         last_char = paragraph[-2]
-#         body2 = soup.find(id="mw-content-text").find("ul").findAll("li")
-#         for bullets in body2:
-#             print(bullets.get_text())
-#
-#
-#
-# except:
-#     print("The word was not found")
-#
+
+
 
 # Python3 code to demonstrate working of
 # Convert numeric words to numbers
