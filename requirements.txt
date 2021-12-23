@@ -10,3 +10,4 @@ comtypes
 beautifulsoup4
 python-dateutil
 audiomentations
+PyAudio

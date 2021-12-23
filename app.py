@@ -1,4 +1,5 @@
 import sys
+import threading
 
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtGui import QFont, QFontDatabase
@@ -8,6 +9,15 @@ from PyQt5.QtCore import Qt
 from utils.dynamicPyQt5Labels import CustomButton
 from utils.dynamicPyQt5Labels import ImageChangingLabel, ImageBackgroundChangingLabel
 from utils.framelessDialog import FramelessDialog
+import pyaudio
+import numpy as np
+import sounddevice as sd
+
+CHUNK = 1024
+SAMPLE_FORMAT = pyaudio.paInt16
+CHANNELS = 1
+SAMPLE_RATE = 16000
+NUMPY_DATATYPE = np.int16
 
 
 class RootWindow(QMainWindow):
@@ -19,6 +29,12 @@ class RootWindow(QMainWindow):
         self.app_name = "SimpleDigitalAssistant"
         self.mousePressPos = None
         self.mouseMovePos = None
+        self.recording = False
+        self.p = None
+        self.stream = None
+        self.buffer = []
+        self.np_buffer = None
+        self.threads = []
 
         self.setFixedWidth(self.WIDTH)
         self.setFixedHeight(self.HEIGHT)
@@ -39,6 +55,7 @@ class RootWindow(QMainWindow):
         self.current_font = QFont(self.lato_font_family, 20)
 
         self._init_colors()
+        self._init_sound_devices()
 
         # create a main frame for overall layout
         self.main_frame = QFrame()
@@ -70,7 +87,7 @@ class RootWindow(QMainWindow):
             "Welcome to your digital assistant, MAX!")
 
         self.mic_label = ImageChangingLabel("resources/images/mic_normal_icon.png",
-                                            "resources/images/mic_highlight_icon.png", None,
+                                            "resources/images/mic_highlight_icon.png", self._start_recording_thread,
                                             350, 350)
 
         self._init_window_frame()
@@ -82,6 +99,18 @@ class RootWindow(QMainWindow):
 
         self.setCentralWidget(self.main_frame)
         self.show()
+
+    def _init_sound_devices(self):
+        self.p = pyaudio.PyAudio()
+        self.input_device_dict = pyaudio.PyAudio.get_default_input_device_info(self.p)
+        self.input_device_idx = self.input_device_dict['index']
+        self.input_device_name = self.input_device_dict["name"]
+        self.input_channels = self.input_device_dict['maxInputChannels']
+        self.default_sample_rate = self.input_device_dict['defaultSampleRate']
+
+        self.output_device_dict = pyaudio.PyAudio.get_default_output_device_info(self.p)
+        self.output_device_num = self.output_device_dict['index']
+        self.output_device_name = self.output_device_dict["name"]
 
     def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
         self.mousePressPos = None
@@ -196,6 +225,41 @@ class RootWindow(QMainWindow):
 
         self.main_frame_layout.addWidget(self.window_frame)
 
+    def _start_recording_thread(self):
+        self.recording_thread = threading.Thread(target=self.get_voice_command)
+        self.recording_thread.setDaemon(True)
+        self.recording_thread.setName("Recording Thread")
+        self.threads.append(self.recording_thread)
+        self.recording_thread.start()
+
+    def get_voice_command(self):
+        if self.recording:
+            self.recording = False
+            self.stream.stop_stream()
+            self.stream.close()
+            self._get_np_buffer()
+            return
+
+        self.buffer = []
+        self.stream = self.p.open(rate=SAMPLE_RATE, channels=CHANNELS, format=SAMPLE_FORMAT,
+                                  frames_per_buffer=CHUNK, input=True)
+        self.recording = True
+
+        while self.recording:
+            data = self.stream.read(1024)
+            print(type(data))
+            self.buffer.append(data)
+
+    def _get_np_buffer(self):
+        """Sets the numpy buffer by converting the bytes object into a numpy array.
+        The numpy buffer can then be used for inference."""
+        self.np_buffer = np.frombuffer(b''.join(self.buffer), dtype=NUMPY_DATATYPE)
+
+    def _play_recorded_buffer_audio(self):
+        self._get_np_buffer()
+        sd.play(self.np_buffer, SAMPLE_RATE)
+
+
     def about(self):
         """This function takes care of the about dialog."""
 
@@ -213,7 +277,6 @@ class RootWindow(QMainWindow):
             '255)">Github</a>')
         github_label.setOpenExternalLinks(True)
 
-        # TODO: add a self.license_box() to display the license in the app.
         license_label = CustomButton(self.license, self.normal_bg, self.minimize_button_label_highlight_bg,
                                      self.normal_color, self.highlight_color)
         license_label.setFont(self.current_font)
@@ -260,8 +323,10 @@ OTHER DEALINGS IN THE SOFTWARE."""
     def minimize_app(self):
         self.showMinimized()
 
-    @staticmethod
-    def exit_app():
+    def exit_app(self):
+        self.p.terminate()
+        for thread in self.threads:
+            thread.join()
         sys.exit(0)
 
 
@@ -275,4 +340,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-f
