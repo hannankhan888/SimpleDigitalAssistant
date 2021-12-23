@@ -276,7 +276,8 @@ from word2number import w2n
 #
 #
 # # Web scraping Wikipedia
-# paras = []
+
+
 
 # Python3 code to demonstrate working of
 # Convert numeric words to numbers
