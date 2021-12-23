@@ -11,3 +11,4 @@ beautifulsoup4
 python-dateutil
 audiomentations
 PyAudio
+sounddevice
