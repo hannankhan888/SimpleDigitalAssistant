@@ -283,17 +283,6 @@ from word2number import w2n
 # Convert numeric words to numbers
 # Using join() + split()
 
-def listToString(s):
-    # initialize an empty string
-    str1 = ""
-
-    # traverse in the string
-    for ele in s:
-        str1 += ele + " "
-
-        # return string
-    return str1
-
 
 # Driver code
 # first_operand = listToString(first_number)
@@ -301,43 +290,3 @@ def listToString(s):
 # print("first_operand:", first_operand)
 # print("last_operand:", last_operand)
 
-def string_to_equation_answer(eq_str: str) -> str:
-    operators = {'plus': '+', 'minus': '-', 'addition': '+', 'times': '*', 'multiplied': '*', 'divide': '/',
-                 'divided': '/'}
-    first_number = None
-    last_number = None
-    op_idx = None
-    last_operand = None
-
-    equation_list = eq_str.split()
-
-    for operator in operators.keys():
-        if operator in equation_list:
-
-            if (operator == 'multiplied') | (operator == 'divided'):
-                op_idx = equation_list.index(operator)
-                first_number = equation_list[0:op_idx]
-                last_number = equation_list[op_idx + 2:]
-            else:
-                op_idx = equation_list.index(operator)
-                first_number = equation_list[0:op_idx]
-                last_number = equation_list[op_idx + 1:]
-            break
-
-    first_operand = listToString(first_number)
-    if len(last_number) > 1:
-        last_number = string_to_equation_answer(listToString(last_number))
-        last_operand = (str(last_number))
-        oper = equation_list[op_idx]
-        answer = eval(str(w2n.word_to_num(first_operand)) + str(operators[oper]) + str(last_operand))
-    else:
-        last_operand = listToString(last_number)
-        oper = equation_list[op_idx]
-        answer = eval(str(w2n.word_to_num(first_operand)) + str(operators[oper]) + str(w2n.word_to_num(last_operand)))
-
-    return answer
-
-
-eq_str = "seven minus one minus two multiplied by three"
-
-print(string_to_equation_answer(eq_str))
