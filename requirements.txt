@@ -12,3 +12,6 @@ python-dateutil
 audiomentations
 PyAudio
 sounddevice
+torch
+transformers
+webrtcvad
