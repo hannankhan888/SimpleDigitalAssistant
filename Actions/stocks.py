@@ -1,25 +1,49 @@
 import yfinance as yf
 import csv
 
+def get_symbol(user_stock_inquiry: str) -> str:
 
-def get_symbol(company_name: str) -> str:
-    try:
-        with open('../resources/symbols.csv', mode='r') as inp:
-            reader = csv.reader(inp)
-            stock_dict = {rows[0]: rows[1] for rows in reader}
-        stock_lower_dict = {k.lower():v for(k, v) in stock_dict.items()}
-        return stock_lower_dict.get(company_name)
-
-    except:
-        return "none"
+    with open('../resources/symbols.csv', mode='r') as inp:
+        reader = csv.reader(inp)
+        stock_dict = {rows[0]: rows[1] for rows in reader}
+    stock_lower_dict = {k.lower(): v for(k, v) in stock_dict.items()}
 
 
-user_inquiry = input("What company stock price would you like to know about: ").lower()
-if get_symbol(user_inquiry) != "none":
-    company = yf.Ticker(get_symbol(user_inquiry))
+    for key in stock_lower_dict:
+        try:
+            ending = key.split()
+            if ending[0] in user_stock_inquiry.lower() or ending[0] and ending[1] in user_stock_inquiry.lower():
+                return stock_lower_dict.get(key)
+        except IndexError:
+            continue
 
-    print(company.info['shortName'] + " (" + company.info['symbol'] + ")")
-    print("Current Price: ", company.info['currentPrice'])
-    print("Recommendation: ", company.info['recommendationKey'])
-else:
-    print("The company symbol cannot be found.   ")
+    return None
+
+
+def company_stock(user_inquiry):
+    ticker = get_symbol(user_inquiry.lower())
+    if ticker != None:
+        company = yf.Ticker(ticker)
+
+        try:
+            company_stock = {'name': company.info['shortName'],
+                             'price': company.info['currentPrice'],
+                             'recommendation': company.info['recommendationKey']}
+
+            print(company.info['shortName'] + " (" + company.info['symbol'] + ")")
+            print("Current Price: ", company.info['currentPrice'])
+            print("Recommendation: ", company.info['recommendationKey'])
+            return company_stock
+        except KeyError:
+            print("Company " +  + "cannot be found.")
+
+    else:
+        print("The company symbol cannot be found.")
+        return None
+
+
+if __name__ == "__main__":
+    company_stock("tell me about abbvie")  # stock that exists (works)
+    company_stock("show me abbott stocks")
+    company_stock("give me bob stock")  # stock that does not exist
+    company_stock("show me GOOGLE stock")  # stock that exists but all caps
