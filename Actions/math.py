@@ -1,8 +1,43 @@
 from word2number import w2n
-def math(math_equation):
-    operators = {'plus': '+', 'minus': '-', 'addition': '+', 'times': '*', 'multiplied': '*', 'divide': '/',
-                 'divided': '/'}
 
+operators = {'plus': '+', 'minus': '-', 'addition': '+', 'times': '*', 'multiplied': '*', 'divide': '/',
+             'divided': '/'}
+
+
+def listToString(s):
+    # initialize an empty string
+    str1 = ""
+
+    # traverse in the string
+    for index, ele in enumerate(s):
+        if len(s)-1 != index:
+            str1 = str1 + ele + "-"
+        else:
+            str1 += ele
+        # return string
+    return str1
+
+
+def preprocessed(input_equation):
+    # find operators
+    # go from left to right putting hyphens on numbers only
+    # use a for loop
+    equation_list = input_equation.split()
+    start_index = 0
+    processed_equation = ""
+    for index, number in enumerate(equation_list):
+        if number in operators.keys():
+            left_side = equation_list[start_index:index]
+            start_index = index+1
+            processed_equation += listToString(left_side) + " " + number + " "
+        elif len(equation_list) == index+1:
+            last_number = equation_list[start_index:]
+            processed_equation += listToString(last_number)
+    return processed_equation
+
+"eleven million three hundred twenty four thousand five hundred thirty two times fifty five times five times three hundred"
+
+def math(math_equation):
     equation = ""
     eq_str = math_equation
     for number in eq_str.split():
@@ -15,9 +50,12 @@ def math(math_equation):
 
     return eval(equation)
 
+
 if __name__ == "__main__":
-    print(math("nine plus five plus twenty plus three minus five divided by two minus three times ten")) #4.5
-    print(math("nine times five times eleven times two minus three")) #987
-    print(math("one million five hundred thousand two hundred forty-three times fifty five")) #60788365 failed TODO: Fix big number calculation
 
-
+    print(math(preprocessed("eleven million three hundred twenty four thousand five hundred thirty two times fifty five times five times three hundred"))) #934273890000
+    print(math(preprocessed("five times five"))) #25
+    print(math(preprocessed("one plus fifty"))) #51
+    print(math(preprocessed("twenty divided by five"))) #4
+    print(math(preprocessed("ten multiplied by five"))) #50
+    print(math(preprocessed("one minus five times five"))) #-24
