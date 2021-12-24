@@ -1,6 +1,6 @@
 import pyaudio
 import webrtcvad
-from inference import Wave2Vec2Inference
+from .inference import Wave2Vec2Inference
 import numpy as np
 import threading
 import copy
@@ -116,7 +116,7 @@ class LiveWav2Vec2():
 if __name__ == "__main__":
     print("Live ASR")
 
-    asr = LiveWav2Vec2("facebook/wav2vec2-base-960h")
+    asr = LiveWav2Vec2("facebook/wav2vec2-large-960h")
     asr.start()
 
     try:        

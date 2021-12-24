@@ -13,6 +13,7 @@ __email__ = "hannankhan888@gmail.com"
 
 from PyQt5 import QtGui, QtWidgets, QtCore
 from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QLabel
 
 
 class ColorChangingLabel(QtWidgets.QLabel):
@@ -221,3 +222,21 @@ class LabelButton(QtWidgets.QLabel):
             if (ev.button() == Qt.LeftButton) and (self.leftButtonClicked is True):
                 self.func()
         super(QtWidgets.QLabel, self).mouseReleaseEvent(ev)
+
+
+class ScrollableLabel(QtWidgets.QScrollArea):
+    def __init__(self, message: str = ""):
+        super(ScrollableLabel, self).__init__()
+
+        self.setWidgetResizable(True)
+
+        self.main_frame = QtWidgets.QWidget()
+        self.main_layout = QtWidgets.QVBoxLayout()
+        self.main_frame.setLayout(self.main_layout)
+
+        self.message_label = QLabel()
+        self.message_label.setText(message)
+        self.message_label.setWordWrap(True)
+        self.message_label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+        self.main_layout.addWidget(self.message_label)
+        self.setWidget(self.main_frame)

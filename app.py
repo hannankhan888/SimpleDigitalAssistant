@@ -6,12 +6,14 @@ from PyQt5.QtGui import QFont, QFontDatabase
 from PyQt5.QtWidgets import QMainWindow, QApplication, QDesktopWidget, QFrame, QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout, QLabel
 from PyQt5.QtCore import Qt
-from utils.dynamicPyQt5Labels import CustomButton
+from utils.dynamicPyQt5Labels import CustomButton, ScrollableLabel
 from utils.dynamicPyQt5Labels import ImageChangingLabel, ImageBackgroundChangingLabel
-from utils.framelessDialog import FramelessDialog
+from utils.framelessDialogs import FramelessMessageDialog, FramelessScrollableMessageDialog
 import pyaudio
 import numpy as np
 import sounddevice as sd
+from VoiceRecognition.Wav2vecLive.inference import Wave2Vec2Inference
+from VoiceRecognition.Wav2vecLive.realTimeAudio import LiveWav2Vec2
 
 CHUNK = 1024
 SAMPLE_FORMAT = pyaudio.paInt16
@@ -21,8 +23,10 @@ NUMPY_DATATYPE = np.int16
 
 
 class RootWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, asr):
         super(RootWindow, self).__init__()
+
+        self.asr = asr
 
         self.WIDTH = 1024
         self.HEIGHT = 576
@@ -86,12 +90,18 @@ class RootWindow(QMainWindow):
         self.welcome_label.setText(
             "Welcome to your digital assistant, MAX!")
 
+        self.output_label = ScrollableLabel("")
+        self.output_label.setFont(QFont(self.lato_font_family, 10))
+        self.output_label.message_label.setWordWrap(True)
+
+
         self.mic_label = ImageChangingLabel("resources/images/mic_normal_icon.png",
                                             "resources/images/mic_highlight_icon.png", self._start_recording_thread,
                                             350, 350)
 
         self._init_window_frame()
         self.bottom_main_frame_layout.addWidget(self.welcome_label)
+        self.bottom_main_frame_layout.addWidget(self.output_label)
         self.bottom_main_frame_layout.addWidget(self.mic_label)
         self.bottom_main_frame.setLayout(self.bottom_main_frame_layout)
         self.main_frame_layout.addWidget(self.bottom_main_frame)
@@ -200,7 +210,7 @@ class RootWindow(QMainWindow):
         self.settings_button_label.setContentsMargins(0, 0, 5, 0)
         self.wf_right_layout.addWidget(self.settings_button_label)
 
-        self.minimize_button_label = CustomButton(self.minimize_app, self.normal_bg,
+        self.minimize_button_label = CustomButton(self._start_asr, self.normal_bg,
                                                   self.minimize_button_label_highlight_bg, self.normal_color,
                                                   self.highlight_color)
         self.minimize_button_label.setToolTip("Minimize")
@@ -224,6 +234,26 @@ class RootWindow(QMainWindow):
         self.window_frame.setLayout(self.window_frame_layout)
 
         self.main_frame_layout.addWidget(self.window_frame)
+
+    def start_asr_thread(self):
+        self.asr_print_thread = threading.Thread(target=self._start_asr_printing)
+        self.asr_print_thread.setDaemon(True)
+        self.asr_print_thread.setName("Recording Thread")
+        self.threads.append(self.asr_print_thread)
+        self.asr_print_thread.start()
+
+    def _start_asr_printing(self):
+        try:
+            while True:
+                text, sample_length, inference_time = self.asr.get_last_text()
+                print(f"{sample_length:.3f}s\t{inference_time:.3f}s\t{text}")
+
+        except KeyboardInterrupt:
+            self.asr.stop()
+
+    def _start_asr(self):
+        self.asr.start()
+        self.start_asr_thread()
 
     def _start_recording_thread(self):
         self.recording_thread = threading.Thread(target=self.get_voice_command)
@@ -264,12 +294,13 @@ class RootWindow(QMainWindow):
     def about(self):
         """This function takes care of the about dialog."""
 
-        about_dialog = FramelessDialog(self,
-                                       "Created by Hannan Khan, Salman Nazir,\nReza Mohideen, and Ali Abdul-Hameed.",
-                                       self.normal_bg, self.minimize_button_label_highlight_bg, self.normal_color,
-                                       self.highlight_color, self.close_button_label_highlight_bg,
-                                       self.close_button_label_highlight_color, "About",
-                                       QFont(self.lato_font_family, 15))
+        about_dialog = FramelessMessageDialog(self,
+                                              "Created by Hannan Khan, Salman Nazir,\nReza Mohideen, and Ali Abdul-Hameed.",
+                                                        self.normal_bg, self.minimize_button_label_highlight_bg,
+                                                        self.normal_color,
+                                                        self.highlight_color, self.close_button_label_highlight_bg,
+                                                        self.close_button_label_highlight_color, "About",
+                                                        QFont(self.lato_font_family, 15))
 
         github_label = QtWidgets.QLabel()
         github_label.setFont(self.current_font)
@@ -315,10 +346,12 @@ HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE."""
-        license_dialog = FramelessDialog(self, license_str, self.normal_bg, self.minimize_button_label_highlight_bg,
-                                         self.normal_color, self.highlight_color, self.close_button_label_highlight_bg,
-                                         self.close_button_label_highlight_color, "License",
-                                         QFont(self.lato_font_family, 12))
+        license_dialog = FramelessScrollableMessageDialog(self, license_str, self.normal_bg,
+                                                          self.minimize_button_label_highlight_bg,
+                                                          self.normal_color, self.highlight_color,
+                                                          self.close_button_label_highlight_bg,
+                                                          self.close_button_label_highlight_color, "License",
+                                                          QFont(self.lato_font_family, 12))
         license_dialog.exec_()
 
     def minimize_app(self):
@@ -334,7 +367,10 @@ OTHER DEALINGS IN THE SOFTWARE."""
 def main():
     app = QApplication(sys.argv)
     desktop = app.desktop()
-    gui = RootWindow()
+
+    asr = LiveWav2Vec2("facebook/wav2vec2-large-960h")
+
+    gui = RootWindow(asr)
 
     sys.exit(app.exec_())
 

@@ -14,4 +14,4 @@ PyAudio
 sounddevice
 torch
 transformers
-webrtcvad
+webrtcvad-wheels

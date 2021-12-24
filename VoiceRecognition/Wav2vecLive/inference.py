@@ -27,6 +27,6 @@ class Wave2Vec2Inference():
 
 if __name__ == "__main__":
     print("Model test")
-    asr = Wave2Vec2Inference("facebook/wav2vec2-base-960h")
+    asr = Wave2Vec2Inference("jonatasgrosman/wav2vec2-large-xlsr-53-english")
     text = asr.file_to_text("scripts/harvard_new.wav")
     print(text)

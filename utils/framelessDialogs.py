@@ -15,7 +15,7 @@ from PyQt5 import QtGui, QtWidgets, QtCore
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtCore import Qt
 
-from dynamicPyQt5Labels import ColorChangingLabel, CustomButton
+from dynamicPyQt5Labels import ColorChangingLabel, CustomButton, ScrollableLabel
 
 
 class FramelessDialog(QtWidgets.QDialog):
@@ -127,12 +127,6 @@ class FramelessDialog(QtWidgets.QDialog):
         self.middle_frame_layout = QtWidgets.QVBoxLayout()
         self.middle_frame_layout.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
 
-        self.message_label = ColorChangingLabel(self.normal_bg, self.highlight_bg, self.normal_color,
-                                                self.highlight_color, False)
-        self.message_label.setFont(self.current_font)
-        self.message_label.setText(self.message)
-        self.middle_frame_layout.addWidget(self.message_label)
-
         self.middle_frame.setLayout(self.middle_frame_layout)
         self.main_frame_layout.addWidget(self.middle_frame)
 
@@ -177,3 +171,41 @@ class FramelessDialog(QtWidgets.QDialog):
 
     def exit_window(self):
         self.close()
+
+
+class FramelessMessageDialog(FramelessDialog):
+    """This class implements a Frameless Dialog and displays a message in the
+    middle frame."""
+
+    def __init__(self, master: QMainWindow = None, message: str = "", normal_bg: QtGui.QColor = None,
+                 highlight_bg: QtGui.QColor = None, normal_color: QtGui.QColor = None,
+                 highlight_color: QtGui.QColor = None, close_button_highlight_bg: QtGui.QColor = None,
+                 close_button_highlight_color: QtGui.QColor = None, window_title: str = "",
+                 current_font: QtGui.QFont = None):
+        super(FramelessMessageDialog, self).__init__(master, message, normal_bg,
+                                                     highlight_bg, normal_color, highlight_color,
+                                                     close_button_highlight_bg, close_button_highlight_color,
+                                                     window_title, current_font)
+        self.message_label = ColorChangingLabel(self.normal_bg, self.highlight_bg, self.normal_color,
+                                                self.highlight_color, False)
+        self.message_label.setFont(self.current_font)
+        self.message_label.setText(self.message)
+        self.middle_frame_layout.addWidget(self.message_label)
+
+
+class FramelessScrollableMessageDialog(FramelessDialog):
+    """This class implements a FramelessDialog with a message in its """
+
+    def __init__(self, master: QMainWindow = None, message: str = "", normal_bg: QtGui.QColor = None,
+                 highlight_bg: QtGui.QColor = None, normal_color: QtGui.QColor = None,
+                 highlight_color: QtGui.QColor = None, close_button_highlight_bg: QtGui.QColor = None,
+                 close_button_highlight_color: QtGui.QColor = None, window_title: str = "",
+                 current_font: QtGui.QFont = None):
+        super(FramelessScrollableMessageDialog, self).__init__(master, message, normal_bg,
+                                                               highlight_bg, normal_color, highlight_color,
+                                                               close_button_highlight_bg, close_button_highlight_color,
+                                                               window_title, current_font)
+
+        self.master = master
+        self.message_label = ScrollableLabel(message)
+        self.middle_frame_layout.addWidget(self.message_label)
