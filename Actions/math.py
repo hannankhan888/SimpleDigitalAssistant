@@ -4,7 +4,7 @@ operators = {'plus': '+', 'minus': '-', 'addition': '+', 'times': '*', 'multipli
              'divided': '/'}
 
 
-def listToString(s):
+def listToHyphenString(s):
     # initialize an empty string
     str1 = ""
 
@@ -29,10 +29,10 @@ def preprocessed(input_equation):
         if number in operators.keys():
             left_side = equation_list[start_index:index]
             start_index = index+1
-            processed_equation += listToString(left_side) + " " + number + " "
+            processed_equation += listToHyphenString(left_side) + " " + number + " "
         elif len(equation_list) == index+1:
             last_number = equation_list[start_index:]
-            processed_equation += listToString(last_number)
+            processed_equation += listToHyphenString(last_number)
     return processed_equation
 
 "eleven million three hundred twenty four thousand five hundred thirty two times fifty five times five times three hundred"
