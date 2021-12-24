@@ -4,7 +4,7 @@
 """This is a minimalist frameless QDialog."""
 
 __author__ = "Hannan Khan"
-__copyright__ = "Copyright 2020, Audio Recorder"
+__copyright__ = "Copyright 2021, SimpleDigitalAssistant"
 __credits__ = ["Hannan Khan"]
 __license__ = "MIT"
 __version__ = "1.0"

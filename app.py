@@ -237,7 +237,7 @@ class RootWindow(QMainWindow):
             self.recording = False
             self.stream.stop_stream()
             self.stream.close()
-            self._get_np_buffer()
+            self._play_recorded_buffer_audio()
             return
 
         self.buffer = []
@@ -245,9 +245,9 @@ class RootWindow(QMainWindow):
                                   frames_per_buffer=CHUNK, input=True)
         self.recording = True
 
+        # data is of class 'bytes' and needs to converted into a numpy array.
         while self.recording:
             data = self.stream.read(1024)
-            print(type(data))
             self.buffer.append(data)
 
     def _get_np_buffer(self):
@@ -257,8 +257,9 @@ class RootWindow(QMainWindow):
 
     def _play_recorded_buffer_audio(self):
         self._get_np_buffer()
+        print(self.np_buffer, "len:", len(self.np_buffer), "size in memory (bytes)",
+              (self.np_buffer.size * self.np_buffer.itemsize))
         sd.play(self.np_buffer, SAMPLE_RATE)
-
 
     def about(self):
         """This function takes care of the about dialog."""
