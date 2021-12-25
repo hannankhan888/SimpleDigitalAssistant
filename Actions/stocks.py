@@ -35,7 +35,7 @@ def company_stock(user_inquiry):
             print("Recommendation: ", company.info['recommendationKey'])
             return company_stock
         except KeyError:
-            print("Company " +  + "cannot be found.")
+            print("Company cannot be found.")
 
     else:
         print("The company symbol cannot be found.")
