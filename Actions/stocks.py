@@ -47,3 +47,4 @@ if __name__ == "__main__":
     company_stock("show me abbott stocks")
     company_stock("give me bob stock")  # stock that does not exist
     company_stock("show me GOOGLE stock")  # stock that exists but all caps
+    company_stock("tell me the stock price of facebook")  # stock for a company with quotations around it
