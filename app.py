@@ -6,7 +6,7 @@ from PyQt5.QtGui import QFont, QFontDatabase
 from PyQt5.QtWidgets import QMainWindow, QApplication, QDesktopWidget, QFrame, QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout, QLabel
 from PyQt5.QtCore import Qt
-from utils.dynamicPyQt5Labels import CustomButton, ScrollableLabel
+from utils.dynamicPyQt5Labels import CustomButton
 from utils.dynamicPyQt5Labels import ImageChangingLabel, ImageBackgroundChangingLabel
 from utils.framelessDialogs import FramelessMessageDialog, FramelessScrollableMessageDialog
 import pyaudio
@@ -90,10 +90,9 @@ class RootWindow(QMainWindow):
         self.welcome_label.setText(
             "Welcome to your digital assistant, MAX!")
 
-        self.output_label = ScrollableLabel("")
+        self.output_label = QtWidgets.QTextEdit()
+        self.output_label.setReadOnly(True)
         self.output_label.setFont(QFont(self.lato_font_family, 10))
-        self.output_label.message_label.setWordWrap(True)
-
 
         self.mic_label = ImageChangingLabel("resources/images/mic_normal_icon.png",
                                             "resources/images/mic_highlight_icon.png", self._start_recording_thread,
@@ -246,6 +245,8 @@ class RootWindow(QMainWindow):
         try:
             while True:
                 text, sample_length, inference_time = self.asr.get_last_text()
+                self.output_label.append(text)
+                self.output_label.moveCursor(QtGui.QTextCursor.End)
                 print(f"{sample_length:.3f}s\t{inference_time:.3f}s\t{text}")
 
         except KeyboardInterrupt:
@@ -295,12 +296,13 @@ class RootWindow(QMainWindow):
         """This function takes care of the about dialog."""
 
         about_dialog = FramelessMessageDialog(self,
-                                              "Created by Hannan Khan, Salman Nazir,\nReza Mohideen, and Ali Abdul-Hameed.",
-                                                        self.normal_bg, self.minimize_button_label_highlight_bg,
-                                                        self.normal_color,
-                                                        self.highlight_color, self.close_button_label_highlight_bg,
-                                                        self.close_button_label_highlight_color, "About",
-                                                        QFont(self.lato_font_family, 15))
+                                              "Created by Hannan Khan, Salman Nazir,\nReza Mohideen, and Ali "
+                                              "Abdul-Hameed.",
+                                              self.normal_bg, self.minimize_button_label_highlight_bg,
+                                              self.normal_color,
+                                              self.highlight_color, self.close_button_label_highlight_bg,
+                                              self.close_button_label_highlight_color, "About",
+                                              QFont(self.lato_font_family, 15))
 
         github_label = QtWidgets.QLabel()
         github_label.setFont(self.current_font)

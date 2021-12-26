@@ -105,13 +105,13 @@ class FramelessDialog(QtWidgets.QDialog):
         self.window_frame_right = QtWidgets.QFrame()
         self.wf_right_layout = QtWidgets.QHBoxLayout()
         self.wf_right_layout.setAlignment(Qt.AlignRight)
-        self.wf_right_layout.setContentsMargins(0, 2, 2, 0)
+        self.wf_right_layout.setContentsMargins(0, 0, 0, 0)
 
         self.close_button_label = CustomButton(self.exit_window, self.normal_bg,
                                                self.close_button_highlight_bg, self.normal_color,
                                                self.close_button_highlight_color)
         self.close_button_label.setFont(self.current_font)
-        self.close_button_label.setText(" / ")
+        self.close_button_label.setText("   /   ")
         self.wf_right_layout.addWidget(self.close_button_label)
 
         self.window_frame_right.setLayout(self.wf_right_layout)
