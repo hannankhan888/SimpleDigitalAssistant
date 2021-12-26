@@ -1,8 +1,8 @@
 import sys
 import threading
 
-from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtGui import QFont, QFontDatabase
+from PyQt5 import QtWidgets, QtGui
+from PyQt5.QtGui import QFont, QFontDatabase, QCursor
 from PyQt5.QtWidgets import QMainWindow, QApplication, QDesktopWidget, QFrame, QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout, QLabel
 from PyQt5.QtCore import Qt
@@ -12,8 +12,8 @@ from utils.framelessDialogs import FramelessMessageDialog, FramelessScrollableMe
 import pyaudio
 import numpy as np
 import sounddevice as sd
-from VoiceRecognition.Wav2vecLive.inference import Wave2Vec2Inference
 from VoiceRecognition.Wav2vecLive.realTimeAudio import LiveWav2Vec2
+from VoiceRecognition.Wav2vecLive.inference import Wave2Vec2Inference
 
 CHUNK = 1024
 SAMPLE_FORMAT = pyaudio.paInt16
@@ -23,11 +23,10 @@ NUMPY_DATATYPE = np.int16
 
 
 class RootWindow(QMainWindow):
-    def __init__(self, asr):
+    def __init__(self, model_name):
         super(RootWindow, self).__init__()
 
-        self.asr = asr
-
+        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         self.WIDTH = 1024
         self.HEIGHT = 576
         self.app_name = "SimpleDigitalAssistant"
@@ -39,6 +38,9 @@ class RootWindow(QMainWindow):
         self.buffer = []
         self.np_buffer = None
         self.threads = []
+        self.asr_print_thread = None
+        self.model_name = model_name
+        self.wav2vec_inference = Wave2Vec2Inference(self.model_name)
 
         self.setFixedWidth(self.WIDTH)
         self.setFixedHeight(self.HEIGHT)
@@ -79,6 +81,12 @@ class RootWindow(QMainWindow):
         self.bottom_main_frame_layout.setContentsMargins(10, 70, 10, 10)
         self.bottom_main_frame_layout.setAlignment(Qt.AlignLeft)
 
+        self.bottom_left_main_frame = QFrame()
+        self.bottom_left_main_frame_layout = QVBoxLayout()
+        self.bottom_left_main_frame_layout.setSpacing(50)
+        self.bottom_left_main_frame_layout.setContentsMargins(10, 10, 10, 10)
+        self.bottom_left_main_frame_layout.setAlignment(Qt.AlignCenter)
+
         self.setWindowTitle(self.app_name)
 
         self.welcome_label = QLabel()
@@ -87,26 +95,30 @@ class RootWindow(QMainWindow):
         QLabel { rgb (88, 105, 126); }
         """)
         self.welcome_label.setWordWrap(True)
-        self.welcome_label.setText(
-            "Welcome to your digital assistant, MAX!")
+        self.welcome_label.setText("Welcome to your digital assistant, MAX!")
 
         self.output_label = QtWidgets.QTextEdit()
         self.output_label.setReadOnly(True)
         self.output_label.setFont(QFont(self.lato_font_family, 10))
+        self.output_label.setTextInteractionFlags(Qt.NoTextInteraction)
+        self.output_label.setCursor(QCursor(Qt.ArrowCursor))
 
         self.mic_label = ImageChangingLabel("resources/images/mic_normal_icon.png",
                                             "resources/images/mic_highlight_icon.png", self._start_recording_thread,
                                             350, 350)
 
         self._init_window_frame()
-        self.bottom_main_frame_layout.addWidget(self.welcome_label)
-        self.bottom_main_frame_layout.addWidget(self.output_label)
+        self.bottom_left_main_frame_layout.addWidget(self.welcome_label)
+        self.bottom_left_main_frame_layout.addWidget(self.output_label)
+        self.bottom_left_main_frame.setLayout(self.bottom_left_main_frame_layout)
+        self.bottom_main_frame_layout.addWidget(self.bottom_left_main_frame)
         self.bottom_main_frame_layout.addWidget(self.mic_label)
         self.bottom_main_frame.setLayout(self.bottom_main_frame_layout)
         self.main_frame_layout.addWidget(self.bottom_main_frame)
         self.main_frame.setLayout(self.main_frame_layout)
 
         self.setCentralWidget(self.main_frame)
+        QApplication.setOverrideCursor(QCursor(Qt.ArrowCursor))
         self.show()
 
     def _init_sound_devices(self):
@@ -124,13 +136,13 @@ class RootWindow(QMainWindow):
     def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
         self.mousePressPos = None
         self.mouseMovePos = None
-        if (a0.button() == QtCore.Qt.LeftButton) and self.window_frame.underMouse():
+        if (a0.button() == Qt.LeftButton) and self.window_frame.underMouse():
             self.mousePressPos = a0.globalPos()
             self.mouseMovePos = a0.globalPos()
         super(RootWindow, self).mousePressEvent(a0)
 
     def mouseMoveEvent(self, a0: QtGui.QMouseEvent) -> None:
-        if (a0.buttons() == QtCore.Qt.LeftButton) and (self.window_frame.underMouse()):
+        if (a0.buttons() == Qt.LeftButton) and (self.window_frame.underMouse()):
             curr_pos = self.pos()
             global_pos = a0.globalPos()
             diff = global_pos - self.mouseMovePos
@@ -209,7 +221,7 @@ class RootWindow(QMainWindow):
         self.settings_button_label.setContentsMargins(0, 0, 5, 0)
         self.wf_right_layout.addWidget(self.settings_button_label)
 
-        self.minimize_button_label = CustomButton(self._start_asr, self.normal_bg,
+        self.minimize_button_label = CustomButton(self.minimize_app, self.normal_bg,
                                                   self.minimize_button_label_highlight_bg, self.normal_color,
                                                   self.highlight_color)
         self.minimize_button_label.setToolTip("Minimize")
@@ -265,10 +277,13 @@ class RootWindow(QMainWindow):
 
     def get_voice_command(self):
         if self.recording:
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             self.recording = False
             self.stream.stop_stream()
             self.stream.close()
-            self._play_recorded_buffer_audio()
+            self._transcribe_and_print_buffer_audio()
+            # self._play_recorded_buffer_audio()
+            QApplication.setOverrideCursor(QCursor(Qt.ArrowCursor))
             return
 
         self.buffer = []
@@ -284,13 +299,21 @@ class RootWindow(QMainWindow):
     def _get_np_buffer(self):
         """Sets the numpy buffer by converting the bytes object into a numpy array.
         The numpy buffer can then be used for inference."""
-        self.np_buffer = np.frombuffer(b''.join(self.buffer), dtype=NUMPY_DATATYPE)
+        # TODO: WHY AM I, AND YOU ALSO REZA, DIVIDING BY 32767?!? IF I DONT
+        # DO THIS, THEN i GET THIS ERROR:
+        # RuntimeError: expected scalar type Double but found Float
+        self.np_buffer = np.frombuffer(b''.join(self.buffer), dtype=NUMPY_DATATYPE)/32767
 
     def _play_recorded_buffer_audio(self):
         self._get_np_buffer()
         print(self.np_buffer, "len:", len(self.np_buffer), "size in memory (bytes)",
               (self.np_buffer.size * self.np_buffer.itemsize))
         sd.play(self.np_buffer, SAMPLE_RATE)
+
+    def _transcribe_and_print_buffer_audio(self):
+        self._get_np_buffer()
+        self.output_label.append(self.wav2vec_inference.buffer_to_text(self.np_buffer).lower())
+        self.output_label.moveCursor(QtGui.QTextCursor.End)
 
     def about(self):
         """This function takes care of the about dialog."""
@@ -370,9 +393,7 @@ def main():
     app = QApplication(sys.argv)
     desktop = app.desktop()
 
-    asr = LiveWav2Vec2("facebook/wav2vec2-large-960h")
-
-    gui = RootWindow(asr)
+    gui = RootWindow(model_name="facebook/wav2vec2-large-960h")
 
     sys.exit(app.exec_())
 
