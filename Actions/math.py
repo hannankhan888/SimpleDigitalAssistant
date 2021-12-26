@@ -54,8 +54,13 @@ def math(math_equation):
 if __name__ == "__main__":
 
     print(math(preprocessed("eleven million three hundred twenty four thousand five hundred thirty two times fifty five times five times three hundred"))) #934273890000
-    print(math(preprocessed("five times five"))) #25
+    print(math(preprocessed("five times five equal to"))) #25
     print(math(preprocessed("one plus fifty"))) #51
     print(math(preprocessed("twenty divided by five"))) #4
     print(math(preprocessed("ten multiplied by five"))) #50
     print(math(preprocessed("one minus five times five"))) #-24
+    print(math(preprocessed("What is eleven million three hundred twenty four thousand five hundred thirty two times fifty five times five times three hundred"))) #934273890000
+    print(math(preprocessed("What's eleven million three hundred twenty four thousand five hundred thirty two times fifty five times five times three hundred"))) #934273890000
+    print(math(preprocessed("What is eleven million three hundred twenty four thousand five hundred thirty two times fifty five times five times three hundred equal to"))) #934273890000
+    print(math(preprocessed("What's eleven million three hundred twenty four thousand five hundred thirty two times fifty five times five times three hundred equal to"))) #934273890000
+
