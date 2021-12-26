@@ -10,7 +10,7 @@ import contextvars
 from queue import  Queue
 
 
-class LiveWav2Vec2():
+class LiveWav2Vec2:
     exit_event = threading.Event()    
     def __init__(self, model_name, device_name="default"):
         self.model_name = model_name
