@@ -1,6 +1,6 @@
 import pyaudio
 import webrtcvad
-from .inference import Wave2Vec2Inference
+from inference import Wave2Vec2Inference
 import numpy as np
 import threading
 import copy
@@ -8,6 +8,7 @@ import time
 from sys import exit
 import contextvars
 from queue import  Queue
+import os
 
 
 class LiveWav2Vec2:
@@ -30,11 +31,12 @@ class LiveWav2Vec2:
             self.model_name, self.asr_input_queue, self.asr_output_queue,))
         self.asr_process.start()
         time.sleep(5)  # start vad after asr model is loaded
+        self.start_time = time.time()
         self.vad_process = threading.Thread(target=LiveWav2Vec2.vad_process, args=(
-            self.device_name, self.asr_input_queue,))
+            self, self.device_name, self.asr_input_queue,))
         self.vad_process.start()
 
-    def vad_process(device_name, asr_input_queue):
+    def vad_process(self, device_name, asr_input_queue):
         vad = webrtcvad.Vad()
         vad.set_mode(1)
 
@@ -58,21 +60,39 @@ class LiveWav2Vec2:
                             input=True,
                             frames_per_buffer=CHUNK)
 
-        frames = b''                
+        frames = b'' 
+        frames_tag = []
+        end_frame = 0  
         while True:         
             if LiveWav2Vec2.exit_event.is_set():
                 break            
             frame = stream.read(CHUNK)
-            is_speech = vad.is_speech(frame, RATE)
-            if is_speech:
+            frames_tag.append(vad.is_speech(frame, RATE))
+            
+            if frames_tag[-1]:
                 frames += frame
-            else:
-                if len(frames) > 1:
-                    asr_input_queue.put(frames)
-                frames = b''
+
+            frame_diff = len(frames) - end_frame
+            if frame_diff > 8000:
+                asr_input_queue.put(frames)
+                end_frame = len(frames)
+
+            # if time > 2 seconds and last 1 second of is_speech frame == false stop computation
+            NUM_FRAMES = 50
+            percent_silence = len([ele for ele in frames_tag[-NUM_FRAMES:] if ele == False]) / NUM_FRAMES
+            elapsed_time = time.time() - self.start_time
+            if elapsed_time > 2 and (percent_silence > 0.8 and len(frames_tag[-NUM_FRAMES:]) == NUM_FRAMES):
+                print(time.time() - self.start_time)
+                break
+            # else:
+            #     if len(frames) > 1:
+            #         asr_input_queue.put(frames)
+            #     frames = b''
         stream.stop_stream()
         stream.close()
         audio.terminate()
+        self.stop()
+
 
     def asr_process(model_name, in_queue, output_queue):
         wave2vec_asr = Wave2Vec2Inference(model_name)
