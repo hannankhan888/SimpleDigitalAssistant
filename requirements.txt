@@ -16,9 +16,10 @@ pyctcdecode
 sounddevice
 tqdm
 transformers
-webrtcvad
+webrtcvad-wheels
 yfinance
 numpy
 future
 soundfile
 pyctcdecode
+https://github.com/kpu/kenlm/archive/master.zip
