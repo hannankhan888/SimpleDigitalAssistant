@@ -26,16 +26,22 @@ class LiveWav2Vec2:
 
     def start(self):
         """start the asr process"""
+        self.wav2vec2_initialized = False
         self.asr_output_queue = Queue()
         self.asr_input_queue = Queue()
         self.asr_process = threading.Thread(target=LiveWav2Vec2.asr_process, args=(
-            self.model_name, self.asr_input_queue, self.asr_output_queue,))
+            self, self.model_name, self.asr_input_queue, self.asr_output_queue,))
         self.asr_process.start()
-        time.sleep(5)  # start vad after asr model is loaded
-        self.start_time = time.time()
-        self.vad_process = threading.Thread(target=LiveWav2Vec2.vad_process, args=(
-            self, self.device_name, self.asr_input_queue,))
-        self.vad_process.start()
+        # time.sleep(5)  # start vad after asr model is loaded
+        while not self.wav2vec2_initialized:
+            pass
+
+        if self.wav2vec2_initialized:
+            print("starting VAD")
+            self.start_time = time.time()
+            self.vad_process = threading.Thread(target=LiveWav2Vec2.vad_process, args=(
+                self, self.device_name, self.asr_input_queue,))
+            self.vad_process.start()
 
     def vad_process(self, device_name, asr_input_queue):
         vad = webrtcvad.Vad()
@@ -62,41 +68,46 @@ class LiveWav2Vec2:
                             frames_per_buffer=CHUNK)
 
         frames = b'' 
-        frames_tag = []
+        frames_tag = [] # holds boolean of whether speech was detected
         end_frame = 0  
+        exit_time = None
         while True:         
             if LiveWav2Vec2.exit_event.is_set():
                 break            
             frame = stream.read(CHUNK)
             frames_tag.append(vad.is_speech(frame, RATE))
             
+            # add frames only if voice is detected
             if frames_tag[-1]:
                 frames += frame
 
+            # add every 0.5 seconds of frames to queue
             frame_diff = len(frames) - end_frame
             if frame_diff > 8000:
                 asr_input_queue.put(frames)
                 end_frame = len(frames)
 
-            # if time > 2 seconds and last 1 second of is_speech frame == false stop computation
-            NUM_FRAMES = 50
+            # if time > 2 seconds and 90% of last 1 second of frames has no voice detected then listen for 2 more seconds then exit
+            NUM_FRAMES = 100
             percent_silence = len([ele for ele in frames_tag[-NUM_FRAMES:] if ele == False]) / NUM_FRAMES
             elapsed_time = time.time() - self.start_time
             if elapsed_time > 2 and (percent_silence > 0.8 and len(frames_tag[-NUM_FRAMES:]) == NUM_FRAMES):
-                print(time.time() - self.start_time)
-                break
-            # else:
-            #     if len(frames) > 1:
-            #         asr_input_queue.put(frames)
-            #     frames = b''
+                if exit_time is None:
+                    exit_time = time.time()
+                elif time.time() - exit_time > 2:
+                    break
+                else:
+                    pass
+
         stream.stop_stream()
         stream.close()
         audio.terminate()
         self.stop()
 
 
-    def asr_process(model_name, in_queue, output_queue):
-        wave2vec_asr = Wave2Vec2Inference(model_name)
+    def asr_process(self, model_name, in_queue, output_queue):
+        wave2vec_asr = Wave2Vec2Inference(model_name, self.lm_path)
+        self.wav2vec2_initialized = True
 
         print("\nlistening to your voice\n")
         while True:                        
