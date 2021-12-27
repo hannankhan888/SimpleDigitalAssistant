@@ -19,3 +19,4 @@ yfinance
 numpy
 future
 soundfile
+pyctcdecode
