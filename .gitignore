@@ -4,9 +4,11 @@
 /venv/
 
 __pycache__/
+.env
 
 # IDE - VSCode
 .vscode
+.code-workspace
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json

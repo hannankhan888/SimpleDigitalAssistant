@@ -5,12 +5,14 @@ librosa
 ffmpeg
 scipy
 requests
+dotenv
 pandas
 numpy
 comtypes
 beautifulsoup4
 python-dateutil
 audiomentations
+ibm_watson
 PyAudio
 pyctcdecode
 sounddevice
