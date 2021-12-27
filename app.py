@@ -38,6 +38,7 @@ class RootWindow(QMainWindow):
         self.buffer = []
         self.np_buffer = None
         self.threads = []
+        self.recording_thread = None
         self.asr_print_thread = None
         self.model_name = model_name
         self.wav2vec_inference = Wave2Vec2Inference(self.model_name)
@@ -269,11 +270,13 @@ class RootWindow(QMainWindow):
         self.start_asr_thread()
 
     def _start_recording_thread(self):
+        # self.mic_label.invert_active_state()
         self.recording_thread = threading.Thread(target=self.get_voice_command)
         self.recording_thread.setDaemon(True)
-        self.recording_thread.setName("Recording Thread")
+        self.recording_thread.setName("recording_thread")
         self.threads.append(self.recording_thread)
         self.recording_thread.start()
+        print("threads: ", self.threads)
 
     def get_voice_command(self):
         if self.recording:
@@ -302,7 +305,7 @@ class RootWindow(QMainWindow):
         # TODO: WHY AM I, AND YOU ALSO REZA, DIVIDING BY 32767?!? IF I DONT
         # DO THIS, THEN i GET THIS ERROR:
         # RuntimeError: expected scalar type Double but found Float
-        self.np_buffer = np.frombuffer(b''.join(self.buffer), dtype=NUMPY_DATATYPE)/32767
+        self.np_buffer = np.frombuffer(b''.join(self.buffer), dtype=NUMPY_DATATYPE) / 32767
 
     def _play_recorded_buffer_audio(self):
         self._get_np_buffer()
@@ -312,7 +315,11 @@ class RootWindow(QMainWindow):
 
     def _transcribe_and_print_buffer_audio(self):
         self._get_np_buffer()
-        self.output_label.append(self.wav2vec_inference.buffer_to_text(self.np_buffer).lower())
+        self.transcribed_text = self.wav2vec_inference.buffer_to_text(self.np_buffer).lower()
+        if self.transcribed_text:
+            self.output_label.append(self.transcribed_text)
+        else:
+            self.output_label.append("Please try again.")
         self.output_label.moveCursor(QtGui.QTextCursor.End)
 
     def about(self):
