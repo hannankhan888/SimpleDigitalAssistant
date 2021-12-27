@@ -3,7 +3,6 @@ import webrtcvad
 from inference import Wave2Vec2Inference
 import numpy as np
 import threading
-import copy
 import time
 from sys import exit
 import contextvars
