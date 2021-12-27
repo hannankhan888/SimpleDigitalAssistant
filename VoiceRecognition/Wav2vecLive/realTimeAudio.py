@@ -13,9 +13,10 @@ import os
 
 class LiveWav2Vec2:
     exit_event = threading.Event()    
-    def __init__(self, model_name, device_name="default"):
+    def __init__(self, model_name, lm_path=None, device_name="default"):
         self.model_name = model_name
-        self.device_name = device_name              
+        self.device_name = device_name  
+        self.lm_path = lm_path            
 
     def stop(self):
         """stop the asr process"""
@@ -135,8 +136,14 @@ class LiveWav2Vec2:
 
 if __name__ == "__main__":
     print("Live ASR")
+    MODELS = {
+        "large": "facebook/wav2vec2-large-960h",
+        "base": "facebook/wav2vec2-base-960h",
+        "distil": "OthmaneJ/distil-wav2vec2"
+    }
+    LM = "VoiceRecognition/4gram_big.arpa"
 
-    asr = LiveWav2Vec2("facebook/wav2vec2-large-960h")
+    asr = LiveWav2Vec2(model_name=MODELS["distil"], lm_path=LM)
     asr.start()
 
     try:        
