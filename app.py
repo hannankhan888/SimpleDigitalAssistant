@@ -1,3 +1,18 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+""" This file contains the GUI for the SimpleDigitalAssistant application.
+    This application is made specifically for Windows OS, and can be used
+    to accomplish small tasks via voice recognition (using pre-trained models)."""
+
+__author__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
+__copyright__ = "Copyright 2021, SimpleDigitalAssistant"
+__credits__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
+__license__ = "MIT"
+__version__ = "1.0"
+__maintainer__ = "Hannan Khan"
+__email__ = "hannankhan888@gmail.com"
+
 import sys
 import threading
 
@@ -23,10 +38,13 @@ NUMPY_DATATYPE = np.int16
 
 
 class RootWindow(QMainWindow):
+    """ This class is the main window of our application. It creates and calls an
+    inference object Wave2Vec2Inference which uses a pretrained model to achieve
+    automatic speech recognition."""
+
     def __init__(self, model_name):
         super(RootWindow, self).__init__()
 
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         self.WIDTH = 1024
         self.HEIGHT = 576
         self.app_name = "SimpleDigitalAssistant"
@@ -61,9 +79,6 @@ class RootWindow(QMainWindow):
         self.lato_font_family = self.font_database.applicationFontFamilies(self.lato_font_id).__getitem__(0)
         self.current_font = QFont(self.lato_font_family, 20)
 
-        self._init_colors()
-        self._init_sound_devices()
-
         # create a main frame for overall layout
         self.main_frame = QFrame()
         self.main_frame_stylesheet = """
@@ -76,6 +91,18 @@ class RootWindow(QMainWindow):
         self.main_frame_layout.setContentsMargins(0, 0, 0, 0)
         self.main_frame_layout.setAlignment(Qt.AlignTop)
 
+        self._init_colors()
+        self._init_sound_devices()
+        self._init_bottom_main_frame()
+        self._init_window_frame()
+
+        self.main_frame_layout.addWidget(self.bottom_main_frame)
+        self.main_frame.setLayout(self.main_frame_layout)
+
+        self.setCentralWidget(self.main_frame)
+        self.show()
+
+    def _init_bottom_main_frame(self) -> None:
         self.bottom_main_frame = QFrame()
         self.bottom_main_frame_layout = QHBoxLayout()
         self.bottom_main_frame_layout.setSpacing(50)
@@ -87,8 +114,6 @@ class RootWindow(QMainWindow):
         self.bottom_left_main_frame_layout.setSpacing(50)
         self.bottom_left_main_frame_layout.setContentsMargins(10, 10, 10, 10)
         self.bottom_left_main_frame_layout.setAlignment(Qt.AlignCenter)
-
-        self.setWindowTitle(self.app_name)
 
         self.welcome_label = QLabel()
         self.welcome_label.setFont(self.current_font)
@@ -108,21 +133,14 @@ class RootWindow(QMainWindow):
                                             "resources/images/mic_highlight_icon.png", self._start_recording_thread,
                                             350, 350)
 
-        self._init_window_frame()
         self.bottom_left_main_frame_layout.addWidget(self.welcome_label)
         self.bottom_left_main_frame_layout.addWidget(self.output_label)
         self.bottom_left_main_frame.setLayout(self.bottom_left_main_frame_layout)
         self.bottom_main_frame_layout.addWidget(self.bottom_left_main_frame)
         self.bottom_main_frame_layout.addWidget(self.mic_label)
         self.bottom_main_frame.setLayout(self.bottom_main_frame_layout)
-        self.main_frame_layout.addWidget(self.bottom_main_frame)
-        self.main_frame.setLayout(self.main_frame_layout)
 
-        self.setCentralWidget(self.main_frame)
-        QApplication.setOverrideCursor(QCursor(Qt.ArrowCursor))
-        self.show()
-
-    def _init_sound_devices(self):
+    def _init_sound_devices(self) -> None:
         self.p = pyaudio.PyAudio()
         self.input_device_dict = pyaudio.PyAudio.get_default_input_device_info(self.p)
         self.input_device_idx = self.input_device_dict['index']
@@ -155,7 +173,7 @@ class RootWindow(QMainWindow):
     def mouseReleaseEvent(self, a0: QtGui.QMouseEvent) -> None:
         super(RootWindow, self).mouseReleaseEvent(a0)
 
-    def _init_colors(self):
+    def _init_colors(self) -> None:
         # Champagne Pink
         self.normal_bg = QtGui.QColor()
         self.normal_bg.setRgb(255, 232, 214)
@@ -184,7 +202,7 @@ class RootWindow(QMainWindow):
         self.close_button_label_highlight_color = QtGui.QColor()
         self.close_button_label_highlight_color.setRgb(246, 234, 226)
 
-    def _init_window_frame(self):
+    def _init_window_frame(self) -> None:
         self.window_frame = QtWidgets.QFrame()
         self.window_frame.setFixedHeight(60)
         """ Window_frame will have two sub frames, one for the left half, includes the
@@ -247,14 +265,17 @@ class RootWindow(QMainWindow):
 
         self.main_frame_layout.addWidget(self.window_frame)
 
-    def start_asr_thread(self):
+    def start_asr_thread(self) -> None:
+        """ Starts a thread to open a stream (via realTimeAudio.LiveWave2Vec2)
+        and keep transcribing voice until a keyboard interrupt."""
+
         self.asr_print_thread = threading.Thread(target=self._start_asr_printing)
         self.asr_print_thread.setDaemon(True)
         self.asr_print_thread.setName("Recording Thread")
         self.threads.append(self.asr_print_thread)
         self.asr_print_thread.start()
 
-    def _start_asr_printing(self):
+    def _start_asr_printing(self) -> None:
         try:
             while True:
                 text, sample_length, inference_time = self.asr.get_last_text()
@@ -265,12 +286,16 @@ class RootWindow(QMainWindow):
         except KeyboardInterrupt:
             self.asr.stop()
 
-    def _start_asr(self):
-        self.asr.start()
-        self.start_asr_thread()
+    def _start_recording_thread(self) -> None:
+        """ Called by the mic label. Starts a thread that opens a pyaudio stream,
+        records audio until the mic label is pressed again. After the recording has been
+        stopped, the audio buffer is transcribed via the Wave2VecInference model,
+        the stream is closed, and the output text is printed.
 
-    def _start_recording_thread(self):
-        # self.mic_label.invert_active_state()
+        There is an option to play the recorded voice back out loud to you (just in case
+        for debugging). Simply uncomment the appropriate line in self.get_voice_command."""
+
+        self.mic_label.invert_active_state()
         self.recording_thread = threading.Thread(target=self.get_voice_command)
         self.recording_thread.setDaemon(True)
         self.recording_thread.setName("recording_thread")
@@ -278,7 +303,7 @@ class RootWindow(QMainWindow):
         self.recording_thread.start()
         print("threads: ", self.threads)
 
-    def get_voice_command(self):
+    def get_voice_command(self) -> None:
         if self.recording:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             self.recording = False
@@ -299,21 +324,32 @@ class RootWindow(QMainWindow):
             data = self.stream.read(1024)
             self.buffer.append(data)
 
-    def _get_np_buffer(self):
+    def _get_np_buffer(self) -> None:
         """Sets the numpy buffer by converting the bytes object into a numpy array.
-        The numpy buffer can then be used for inference."""
-        # TODO: WHY AM I, AND YOU ALSO REZA, DIVIDING BY 32767?!? IF I DONT
-        # DO THIS, THEN i GET THIS ERROR:
-        # RuntimeError: expected scalar type Double but found Float
+        The numpy buffer can then be used for inference.
+
+        We are dividing by 32767 because this operation will convert the buffer into
+        a float array (required by the pytorch model). This number is arbitrary and
+        controls the amplitude of the audio (dividing by small numbers results in an
+        increase in amplitude (loudness), large numbers result in decrease in amplitude
+        (not audible to human ear at 500000)). The transcription is not phased by the
+        amplitude. Simply converting the buffer to float results in as loud amplitude
+        as dividing by 1.0."""
+
         self.np_buffer = np.frombuffer(b''.join(self.buffer), dtype=NUMPY_DATATYPE) / 32767
 
-    def _play_recorded_buffer_audio(self):
+    def _play_recorded_buffer_audio(self) -> None:
+        """ Debugging function, used to get the buffer, and play it back out loud.
+        Also prints the buffer, and its relevant information."""
+
         self._get_np_buffer()
-        print(self.np_buffer, "len:", len(self.np_buffer), "size in memory (bytes)",
+        print("np_buffer: ", self.np_buffer, "| len:", len(self.np_buffer), "| size in memory (bytes)",
               (self.np_buffer.size * self.np_buffer.itemsize))
         sd.play(self.np_buffer, SAMPLE_RATE)
 
-    def _transcribe_and_print_buffer_audio(self):
+    def _transcribe_and_print_buffer_audio(self) -> None:
+        """ Transcribes audio based on the given model."""
+
         self._get_np_buffer()
         self.transcribed_text = self.wav2vec_inference.buffer_to_text(self.np_buffer).lower()
         if self.transcribed_text:
@@ -322,7 +358,7 @@ class RootWindow(QMainWindow):
             self.output_label.append("Please try again.")
         self.output_label.moveCursor(QtGui.QTextCursor.End)
 
-    def about(self):
+    def about(self) -> None:
         """This function takes care of the about dialog."""
 
         about_dialog = FramelessMessageDialog(self,
@@ -351,10 +387,10 @@ class RootWindow(QMainWindow):
         about_dialog.middle_frame_layout.addWidget(license_label)
         about_dialog.exec_()
 
-    def settings(self):
+    def settings(self) -> None:
         pass
 
-    def license(self):
+    def license(self) -> None:
         license_str = """
 MIT License
 
@@ -386,10 +422,10 @@ OTHER DEALINGS IN THE SOFTWARE."""
                                                           QFont(self.lato_font_family, 12))
         license_dialog.exec_()
 
-    def minimize_app(self):
+    def minimize_app(self) -> None:
         self.showMinimized()
 
-    def exit_app(self):
+    def exit_app(self) -> None:
         self.p.terminate()
         for thread in self.threads:
             thread.join()
