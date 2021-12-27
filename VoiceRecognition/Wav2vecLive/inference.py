@@ -51,13 +51,57 @@ class Wave2Vec2Inference():
         assert samplerate == 16000
         return self.buffer_to_text(audio_input)
 
+class TestWav2Vec2(Wave2Vec2Inference):
+    def __init__(self, model_name, lm_path=None):
+        super().__init__(model_name, lm_path=lm_path) 
+        self.TEST_SIZE = 100   
+        self.model_name = model_name
+
+    def compute_wer(self):
+        timit = load_dataset("timit_asr")
+        timit = timit.map(self.remove_special_characters)
+        timit_test = {
+            "text": [item for item in timit["test"]["text"][0:self.TEST_SIZE]],
+            "audio": [item["array"] for item in timit["test"]["audio"][0:self.TEST_SIZE]]
+        }
+
+        print("Getting predictions...")
+        results = map(self.buffer_to_text, tqdm(timit_test["audio"]))
+        wer_metric = load_metric("wer")
+        print(f"Test WER for {self.model_name}: {wer_metric.compute(predictions=results, references=timit_test['text']):.3f}")
+
+        return {"og": timit_test["text"], "pred": results}
+
+    def remove_special_characters(self, batch):
+        chars_to_ignore_regex = '[\,\?\.\!\-\;\:\"]'
+        batch["text"] = re.sub(chars_to_ignore_regex, '', batch["text"]).lower() + " "
+        return batch
+
 if __name__ == "__main__":
     print("Model test")
     MODELS = {
         "large": "facebook/wav2vec2-large-960h",
+        "base": "facebook/wav2vec2-base-960h",
         "distil": "OthmaneJ/distil-wav2vec2"
     }
     LM = "VoiceRecognition/4gram_big.arpa"
-    asr = Wave2Vec2Inference(model_name=MODELS["small"],lm_path=LM)
+    start = time.time()
+    asr = Wave2Vec2Inference(model_name=MODELS["distil"],lm_path=LM)
+    print(f"time to initialize obect was {time.time()-start}")
     text = asr.file_to_text("resources/augmented_audio_files/noisy_harvard.wav")
     print(text)
+    
+    # distil_no_lm = TestWav2Vec2(model_name=MODELS["distil"],lm_path=None) # WER = 0.268 on 100 samples
+    # distil_no_lm.compute_wer()
+    # distil_with_lm = TestWav2Vec2(model_name=MODELS["distil"],lm_path=LM) # WER = 0.152 on 100 samples
+    # distil_with_lm.compute_wer()
+
+    # base_no_lm = TestWav2Vec2(model_name=MODELS["base"],lm_path=None) # WER = 0.120 on 100 samples
+    # base_no_lm.compute_wer()
+    # base_with_lm = TestWav2Vec2(model_name=MODELS["base"],lm_path=LM) # WER = 0.081 on 100 samples
+    # base_with_lm.compute_wer()
+
+    # large_no_lm = TestWav2Vec2(model_name=MODELS["large"],lm_path=None) # WER = 0.101 on 100 samples
+    # large_no_lm.compute_wer()
+    # large_with_lm = TestWav2Vec2(model_name=MODELS["large"],lm_path=LM) # WER = 0.068 on 100 samples
+    # large_with_lm.compute_wer()
