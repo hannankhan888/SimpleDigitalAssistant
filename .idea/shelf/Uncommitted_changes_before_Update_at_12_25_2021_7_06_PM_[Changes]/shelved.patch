@@ -1,0 +1,33 @@
+Index: requirements.txt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>PyQt5\r\nscreen_brightness_control\r\npycaw\r\nlibrosa\r\nffmpeg\r\nscipy\r\nrequests\r\npandas\r\ncomtypes\r\nbeautifulsoup4\r\npython-dateutil\r\naudiomentations\r\nPyAudio\r\nsounddevice\r\ntorch\r\ntransformers\r\nwebrtcvad\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/requirements.txt b/requirements.txt
+--- a/requirements.txt	(revision cb174fdbcd753d3a1823286fd0abeffc0431f445)
++++ b/requirements.txt	(date 1640319343361)
+@@ -14,4 +14,3 @@
+ sounddevice
+ torch
+ transformers
+-webrtcvad
+Index: VoiceRecognition/Wav2vecLive/inference.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import soundfile as sf\r\nimport torch\r\nfrom transformers import Wav2Vec2Tokenizer, Wav2Vec2ForCTC\r\n\r\nclass Wave2Vec2Inference():\r\n    def __init__(self,model_name):\r\n        self.tokenizer = Wav2Vec2Tokenizer.from_pretrained(model_name) \r\n        self.model = Wav2Vec2ForCTC.from_pretrained(model_name)\r\n\r\n    def buffer_to_text(self,audio_buffer):\r\n        if(len(audio_buffer)==0):\r\n            return \"\"\r\n\r\n        inputs = self.tokenizer([audio_buffer], sampling_rate=16_000, return_tensors=\"pt\", padding=True)\r\n\r\n        with torch.no_grad():\r\n            logits = self.model(inputs.input_values).logits\r\n\r\n        predicted_ids = torch.argmax(logits, dim=-1)        \r\n        transcription = self.tokenizer.batch_decode(predicted_ids)[0]\r\n        return transcription.lower()\r\n\r\n    def file_to_text(self,filename):\r\n        audio_input, samplerate = sf.read(filename)\r\n        assert samplerate == 16000\r\n        return self.buffer_to_text(audio_input)\r\n\r\nif __name__ == \"__main__\":\r\n    print(\"Model test\")\r\n    asr = Wave2Vec2Inference(\"facebook/wav2vec2-base-960h\")\r\n    text = asr.file_to_text(\"scripts/harvard_new.wav\")\r\n    print(text)
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/VoiceRecognition/Wav2vecLive/inference.py b/VoiceRecognition/Wav2vecLive/inference.py
+--- a/VoiceRecognition/Wav2vecLive/inference.py	(revision cb174fdbcd753d3a1823286fd0abeffc0431f445)
++++ b/VoiceRecognition/Wav2vecLive/inference.py	(date 1640319639633)
+@@ -2,6 +2,7 @@
+ import torch
+ from transformers import Wav2Vec2Tokenizer, Wav2Vec2ForCTC
+ 
++
+ class Wave2Vec2Inference():
+     def __init__(self,model_name):
+         self.tokenizer = Wav2Vec2Tokenizer.from_pretrained(model_name) 
