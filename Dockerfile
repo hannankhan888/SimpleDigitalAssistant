@@ -4,12 +4,12 @@ FROM pytorch/pytorch
 RUN apt update && \
     apt install vim net-tools ffmpeg portaudio19-dev \
     alsa-base alsa-utils \
+    libportaudio2 libportaudiocpp0 libsndfile1-dev \
     -y
 
 RUN python3 -m pip install --no-cache-dir --upgrade pip && \
     python3 -m pip install --no-cache-dir \
-    jupyter \
-    torch
+    jupyter 
 
 # Copy our application code
 WORKDIR /workspace
