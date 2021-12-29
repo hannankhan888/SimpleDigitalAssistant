@@ -18,8 +18,8 @@ import threading
 
 from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtGui import QFont, QFontDatabase, QCursor
-from PyQt5.QtWidgets import QMainWindow, QApplication, QDesktopWidget, QFrame, QVBoxLayout
-from PyQt5.QtWidgets import QHBoxLayout, QLabel
+from PyQt5.QtWidgets import QMainWindow, QApplication, QDesktopWidget, QFrame
+from PyQt5.QtWidgets import QHBoxLayout, QLabel, QVBoxLayout
 from PyQt5.QtCore import Qt
 from utils.dynamicPyQt5Labels import CustomButton
 from utils.dynamicPyQt5Labels import ImageChangingLabel, ImageBackgroundChangingLabel
@@ -27,7 +27,6 @@ from utils.framelessDialogs import FramelessMessageDialog, FramelessScrollableMe
 import pyaudio
 import numpy as np
 import sounddevice as sd
-from VoiceRecognition.Wav2vecLive.realTimeAudio import LiveWav2Vec2
 from VoiceRecognition.Wav2vecLive.inference import Wave2Vec2Inference
 
 CHUNK = 1024
