@@ -50,6 +50,7 @@ class RootWindow(QMainWindow):
         self.app_name = "SimpleDigitalAssistant"
         self.mousePressPos = None
         self.mouseMovePos = None
+        self.listening_for_max = False
         self.recording = False
         self.p = None
         self.stream = None
@@ -57,6 +58,7 @@ class RootWindow(QMainWindow):
         self.np_buffer = None
         self.threads = []
         self.recording_thread = None
+        self.listening_for_max_thread = None
         self.asr_print_thread = None
         self.model_name = model_name
         self.wav2vec_inference = Wave2Vec2Inference(self.model_name)
@@ -100,6 +102,7 @@ class RootWindow(QMainWindow):
         self.main_frame.setLayout(self.main_frame_layout)
 
         self.setCentralWidget(self.main_frame)
+        self.start_listening_for_max_thread()
         self.show()
 
     def _init_bottom_main_frame(self) -> None:
@@ -265,6 +268,39 @@ class RootWindow(QMainWindow):
 
         self.main_frame_layout.addWidget(self.window_frame)
 
+    def start_listening_for_max_thread(self):
+        """ Starts a thread to open a stream and listen for the hotword 'max'.
+        When the keyword is detected, the start_recording_thread function will be
+        called."""
+
+        self.listening_for_max_thread = threading.Thread(target=self._listen_for_max)
+        self.listening_for_max_thread.setDaemon(True)
+        self.listening_for_max_thread.setName("listen_for_max_thread")
+        self.threads.append(self.listening_for_max_thread)
+        self.listening_for_max_thread.start()
+
+    def _listen_for_max(self):
+        self.buffer = []
+        self.stream = self.p.open(rate=SAMPLE_RATE, channels=CHANNELS, format=SAMPLE_FORMAT,
+                                  frames_per_buffer=CHUNK, input=True)
+        self.listening_for_max = True
+
+        # data is of class 'bytes' and needs to converted into a numpy array.
+        while self.listening_for_max:
+            data = self.stream.read(1024)
+            self.buffer.append(data)
+            print(len(self.buffer))
+            if len(self.buffer) > 10:
+                self.buffer = self.buffer[-10:]
+                transcribed_txt = self._transcribe_buffer_audio()
+                if "max" in transcribed_txt:
+                    self.output_label.append(transcribed_txt)
+                    self.stream.stop_stream()
+                    self.stream.close()
+                    self._start_recording_thread()
+                    self.listening_for_max = False
+        return
+
     def start_asr_thread(self) -> None:
         """ Starts a thread to open a stream (via realTimeAudio.LiveWave2Vec2)
         and keep transcribing voice until a keyboard interrupt."""
@@ -347,11 +383,14 @@ class RootWindow(QMainWindow):
               (self.np_buffer.size * self.np_buffer.itemsize))
         sd.play(self.np_buffer, SAMPLE_RATE)
 
+    def _transcribe_buffer_audio(self) -> str:
+        self._get_np_buffer()
+        return self.wav2vec_inference.buffer_to_text(self.np_buffer).lower()
+
     def _transcribe_and_print_buffer_audio(self) -> None:
         """ Transcribes audio based on the given model."""
 
-        self._get_np_buffer()
-        self.transcribed_text = self.wav2vec_inference.buffer_to_text(self.np_buffer).lower()
+        self.transcribed_text = self._transcribe_buffer_audio()
         if self.transcribed_text:
             self.output_label.append(self.transcribed_text)
         else:
