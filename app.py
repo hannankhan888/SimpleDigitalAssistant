@@ -349,9 +349,9 @@ class RootWindow(QMainWindow):
             self.stream.close()
             self._transcribe_and_print_buffer_audio()
             # self._play_recorded_buffer_audio()
-            # self.start_listening_for_max_thread()
             QApplication.setOverrideCursor(QCursor(Qt.ArrowCursor))
             self.mic_label.invert_active_state()
+            self.start_listening_for_max_thread()
             return
 
         self.buffer = []
@@ -366,15 +366,6 @@ class RootWindow(QMainWindow):
             if len(self.buffer) > 30:
                 if self._transcribe_custom_buffer_audio(self.buffer[-15:]) == "":
                     self.get_voice_command()
-                    # QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-                    # self.recording = False
-                    # self.stream.stop_stream()
-                    # self.stream.close()
-                    # self._transcribe_and_print_buffer_audio()
-                    # # self._play_recorded_buffer_audio()
-                    # # self.start_listening_for_max_thread()
-                    # QApplication.setOverrideCursor(QCursor(Qt.ArrowCursor))
-                    # self.mic_label.invert_active_state()
                     return
 
     def _get_np_buffer(self) -> None:
