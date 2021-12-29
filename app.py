@@ -330,6 +330,7 @@ class RootWindow(QMainWindow):
         There is an option to play the recorded voice back out loud to you (just in case
         for debugging). Simply uncomment the appropriate line in self.get_voice_command."""
 
+        self._flush_threads()
         self.mic_label.invert_active_state()
         self.recording_thread = threading.Thread(target=self.get_voice_command)
         self.recording_thread.setDaemon(True)
@@ -414,6 +415,12 @@ class RootWindow(QMainWindow):
         else:
             self.output_label.append("Please try again.")
         self.output_label.moveCursor(QtGui.QTextCursor.End)
+
+    def _flush_threads(self):
+        for idx, thread in enumerate(self.threads):
+            if not thread.is_alive():
+                thread.join()
+                self.threads.pop(idx)
 
     def about(self) -> None:
         """This function takes care of the about dialog."""
