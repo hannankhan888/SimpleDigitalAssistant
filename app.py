@@ -74,6 +74,8 @@ class RootWindow(QMainWindow):
 
         # create a Frameless window
         self.setWindowFlags(Qt.FramelessWindowHint)
+        # add the window icon
+        self.setWindowIcon(QtGui.QIcon("resources/images/icon.ico"))
 
         # create a font database, and load the custom Lato-Thin font
         self.font_database = QFontDatabase()
@@ -109,13 +111,13 @@ class RootWindow(QMainWindow):
         self.bottom_main_frame = QFrame()
         self.bottom_main_frame_layout = QHBoxLayout()
         self.bottom_main_frame_layout.setSpacing(50)
-        self.bottom_main_frame_layout.setContentsMargins(10, 70, 10, 10)
+        self.bottom_main_frame_layout.setContentsMargins(10, 70, 40, 10)
         self.bottom_main_frame_layout.setAlignment(Qt.AlignLeft)
 
         self.bottom_left_main_frame = QFrame()
         self.bottom_left_main_frame_layout = QVBoxLayout()
         self.bottom_left_main_frame_layout.setSpacing(50)
-        self.bottom_left_main_frame_layout.setContentsMargins(10, 10, 10, 10)
+        self.bottom_left_main_frame_layout.setContentsMargins(10, 10, 0, 10)
         self.bottom_left_main_frame_layout.setAlignment(Qt.AlignCenter)
 
         self.welcome_label = QLabel()
@@ -492,6 +494,8 @@ OTHER DEALINGS IN THE SOFTWARE."""
         self.showMinimized()
 
     def exit_app(self) -> None:
+        self.recording = False
+        self.listening_for_max = False
         self.p.terminate()
         for thread in self.threads:
             thread.join()
