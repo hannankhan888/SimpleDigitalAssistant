@@ -2,6 +2,7 @@
 *.iml
 /.idea/*.iml
 /venv/
+/.ipynb_checkpoints/
 
 __pycache__/
 

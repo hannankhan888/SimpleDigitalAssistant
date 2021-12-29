@@ -499,7 +499,8 @@ def main():
     app = QApplication(sys.argv)
     desktop = app.desktop()
 
-    gui = RootWindow(model_name="facebook/wav2vec2-large-960h")
+    gui = RootWindow(model_name="OthmaneJ/distil-wav2vec2")
+    # gui = RootWindow(model_name="facebook/wav2vec2-large-960h")
 
     sys.exit(app.exec_())
 
