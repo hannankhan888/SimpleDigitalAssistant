@@ -289,7 +289,6 @@ class RootWindow(QMainWindow):
         while self.listening_for_max:
             data = self.stream.read(1024)
             self.buffer.append(data)
-            print(len(self.buffer))
             if len(self.buffer) > 10:
                 self.buffer = self.buffer[-10:]
                 transcribed_txt = self._transcribe_buffer_audio()
@@ -347,7 +346,9 @@ class RootWindow(QMainWindow):
             self.stream.close()
             self._transcribe_and_print_buffer_audio()
             # self._play_recorded_buffer_audio()
+            # self.start_listening_for_max_thread()
             QApplication.setOverrideCursor(QCursor(Qt.ArrowCursor))
+            self.mic_label.invert_active_state()
             return
 
         self.buffer = []
@@ -359,6 +360,19 @@ class RootWindow(QMainWindow):
         while self.recording:
             data = self.stream.read(1024)
             self.buffer.append(data)
+            if len(self.buffer) > 30:
+                if self._transcribe_custom_buffer_audio(self.buffer[-15:]) == "":
+                    self.get_voice_command()
+                    # QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+                    # self.recording = False
+                    # self.stream.stop_stream()
+                    # self.stream.close()
+                    # self._transcribe_and_print_buffer_audio()
+                    # # self._play_recorded_buffer_audio()
+                    # # self.start_listening_for_max_thread()
+                    # QApplication.setOverrideCursor(QCursor(Qt.ArrowCursor))
+                    # self.mic_label.invert_active_state()
+                    return
 
     def _get_np_buffer(self) -> None:
         """Sets the numpy buffer by converting the bytes object into a numpy array.
@@ -386,6 +400,10 @@ class RootWindow(QMainWindow):
     def _transcribe_buffer_audio(self) -> str:
         self._get_np_buffer()
         return self.wav2vec_inference.buffer_to_text(self.np_buffer).lower()
+
+    def _transcribe_custom_buffer_audio(self, buffer) -> str:
+        numpy_buffer = np.frombuffer(b''.join(buffer), dtype=NUMPY_DATATYPE) / 32767
+        return self.wav2vec_inference.buffer_to_text(numpy_buffer).lower()
 
     def _transcribe_and_print_buffer_audio(self) -> None:
         """ Transcribes audio based on the given model."""
