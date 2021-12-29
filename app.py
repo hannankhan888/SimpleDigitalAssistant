@@ -275,6 +275,7 @@ class RootWindow(QMainWindow):
         When the keyword is detected, the start_recording_thread function will be
         called."""
 
+        self._update_threads()
         self.listening_for_max_thread = threading.Thread(target=self._listen_for_max)
         self.listening_for_max_thread.setDaemon(True)
         self.listening_for_max_thread.setName("listen_for_max_thread")
@@ -339,7 +340,7 @@ class RootWindow(QMainWindow):
         self.recording_thread.setName("recording_thread")
         self.threads.append(self.recording_thread)
         self.recording_thread.start()
-        print("threads: ", self.threads)
+        # print("threads: ", self.threads)
 
     def get_voice_command(self) -> None:
         if self.recording:
@@ -364,6 +365,7 @@ class RootWindow(QMainWindow):
             data = self.stream.read(1024)
             self.buffer.append(data)
             if len(self.buffer) > 30:
+                # if the last 15 frames are silence, end the command.
                 if self._transcribe_custom_buffer_audio(self.buffer[-15:]) == "":
                     self.get_voice_command()
                     return
