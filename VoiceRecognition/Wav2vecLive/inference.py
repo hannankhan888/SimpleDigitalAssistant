@@ -84,7 +84,7 @@ if __name__ == "__main__":
         "base": "facebook/wav2vec2-base-960h",
         "distil": "OthmaneJ/distil-wav2vec2"
     }
-    LM = "VoiceRecognition/4gram_big.arpa"
+    LM = "../4gram_small.arpa"
     start = time.time()
     asr = Wave2Vec2Inference(model_name=MODELS["distil"],lm_path=LM)
     print(f"time to initialize obect was {time.time()-start}")

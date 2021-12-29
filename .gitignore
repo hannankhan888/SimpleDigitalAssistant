@@ -3,6 +3,7 @@
 /.idea/*.iml
 /venv/
 /.ipynb_checkpoints/
+/VoiceRecognition/*.arpa
 
 __pycache__/
 

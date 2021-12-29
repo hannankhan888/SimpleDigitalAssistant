@@ -62,6 +62,7 @@ class RootWindow(QMainWindow):
         self.asr_print_thread = None
         self.model_name = model_name
         self.wav2vec_inference = Wave2Vec2Inference(self.model_name)
+        # self.wav2vec_inference = Wave2Vec2Inference(self.model_name, lm_path="VoiceRecognition/4gram_big.arpa")
 
         self.setFixedWidth(self.WIDTH)
         self.setFixedHeight(self.HEIGHT)
@@ -499,8 +500,8 @@ def main():
     app = QApplication(sys.argv)
     desktop = app.desktop()
 
-    gui = RootWindow(model_name="OthmaneJ/distil-wav2vec2")
-    # gui = RootWindow(model_name="facebook/wav2vec2-large-960h")
+    # gui = RootWindow(model_name="OthmaneJ/distil-wav2vec2")
+    gui = RootWindow(model_name="facebook/wav2vec2-large-960h")
 
     sys.exit(app.exec_())
 
