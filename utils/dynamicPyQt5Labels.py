@@ -225,6 +225,10 @@ class LabelButton(QtWidgets.QLabel):
 
 
 class ScrollableLabel(QtWidgets.QScrollArea):
+    """ This class displays a label full of text that is scrollable. The word wrap  for the
+    message label can be set to false if horizontal scrolling should also be enabled.
+    Otherwise, this label only scrolls vertically."""
+
     def __init__(self, message: str = ""):
         super(ScrollableLabel, self).__init__()
 

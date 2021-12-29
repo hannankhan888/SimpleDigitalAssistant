@@ -79,7 +79,7 @@ class RootWindow(QMainWindow):
         self.font_database = QFontDatabase()
         self.lato_font_id = self.font_database.addApplicationFont("resources/fonts/Lato-Light.ttf")
         self.lato_font_family = self.font_database.applicationFontFamilies(self.lato_font_id).__getitem__(0)
-        self.current_font = QFont(self.lato_font_family, 20)
+        self.current_font = QFont(self.lato_font_family, 15)
 
         # create a main frame for overall layout
         self.main_frame = QFrame()
@@ -119,7 +119,7 @@ class RootWindow(QMainWindow):
         self.bottom_left_main_frame_layout.setAlignment(Qt.AlignCenter)
 
         self.welcome_label = QLabel()
-        self.welcome_label.setFont(self.current_font)
+        self.welcome_label.setFont(QFont(self.lato_font_family, 20))
         self.welcome_label.setStyleSheet("""
         QLabel { rgb (88, 105, 126); }
         """)
@@ -231,7 +231,7 @@ class RootWindow(QMainWindow):
                                            self.normal_color, self.highlight_color)
         self.app_name_label.setToolTip("About")
         self.app_name_label.setText(self.app_name)
-        self.app_name_label.setFont(QFont(self.lato_font_family, 10))
+        self.app_name_label.setFont(QFont(self.lato_font_family, 11))
         self.wf_left_layout.addWidget(self.app_name_label)
 
         self.settings_button_label = ImageBackgroundChangingLabel(self.normal_bg,
@@ -451,6 +451,7 @@ class RootWindow(QMainWindow):
         about_dialog.middle_frame_layout.addWidget(license_label)
         about_dialog.exec_()
 
+    # TODO: settings menu to display current input/output, and other settings.
     def settings(self) -> None:
         pass
 
@@ -478,6 +479,7 @@ HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE."""
+
         license_dialog = FramelessScrollableMessageDialog(self, license_str, self.normal_bg,
                                                           self.minimize_button_label_highlight_bg,
                                                           self.normal_color, self.highlight_color,

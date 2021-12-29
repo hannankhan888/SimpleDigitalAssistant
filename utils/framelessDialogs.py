@@ -194,7 +194,8 @@ class FramelessMessageDialog(FramelessDialog):
 
 
 class FramelessScrollableMessageDialog(FramelessDialog):
-    """This class implements a FramelessDialog with a message in its """
+    """This class implements a FramelessDialog with a scrollable, non-styleized message
+    in its middle frame."""
 
     def __init__(self, master: QMainWindow = None, message: str = "", normal_bg: QtGui.QColor = None,
                  highlight_bg: QtGui.QColor = None, normal_color: QtGui.QColor = None,
