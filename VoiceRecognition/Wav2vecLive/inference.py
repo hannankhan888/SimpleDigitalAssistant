@@ -36,7 +36,7 @@ class Wave2Vec2Inference():
 
         if self.decoder:
             with torch.no_grad():
-                logits = self.model(inputs.input_values).logits.numpy()[0]
+                logits = self.model(inputs.input_values).logits.cpu().numpy()[0]
             transcription = self.decoder.decode(logits)
         else:
             with torch.no_grad():
@@ -84,7 +84,7 @@ if __name__ == "__main__":
         "base": "facebook/wav2vec2-base-960h",
         "distil": "OthmaneJ/distil-wav2vec2"
     }
-    LM = "../4gram_small.arpa"
+    LM = "../4gram_big.arpa"
     start = time.time()
     asr = Wave2Vec2Inference(model_name=MODELS["distil"],lm_path=LM)
     print(f"time to initialize obect was {time.time()-start}")
