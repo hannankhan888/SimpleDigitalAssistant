@@ -61,7 +61,7 @@ class RootWindow(QMainWindow):
         self.asr_print_thread = None
         self.model_name = model_name
         self.wav2vec_inference = Wave2Vec2Inference(self.model_name)
-        # self.wav2vec_inference = Wave2Vec2Inference(self.model_name, lm_path="VoiceRecognition/4gram_big.arpa")
+        # self.wav2vec_inference = Wave2Vec2Inference(self.model_name, lm_path=r"C:\Users\HannanKhan\Downloads\4-gram-librispeech.bin")
 
         self.setFixedWidth(self.WIDTH)
         self.setFixedHeight(self.HEIGHT)
@@ -290,6 +290,8 @@ class RootWindow(QMainWindow):
 
         # data is of class 'bytes' and needs to converted into a numpy array.
         while self.listening_for_max:
+            if self.recording:
+                return
             data = self.stream.read(1024)
             self.buffer.append(data)
             if len(self.buffer) > 10:
