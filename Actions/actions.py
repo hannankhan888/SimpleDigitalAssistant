@@ -6,6 +6,6 @@ class Action:
 #TODO: retrieve intent from Watson.
         intent = "math"
         if intent == "math":
-            math
+
 
 
