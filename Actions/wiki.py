@@ -1,6 +1,4 @@
-from gtts import gTTS
 from bs4 import BeautifulSoup
-import winsound
 import requests
 def wiki_scrape(topic_name):
     try:

@@ -26,3 +26,4 @@ soundfile
 pyctcdecode
 https://github.com/kpu/kenlm/archive/master.zip
 pyttsx3
+word2number

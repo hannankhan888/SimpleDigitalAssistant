@@ -14,17 +14,23 @@ class Action:
     def __init__(self):
         self.engine = pyttsx3.init()
         self.watson = Watson()
-        self.engine.say("I will speak this text")
+        self.engine.say("Hello")
         self.engine.runAndWait()
 
     def take_action(self, command: str) -> None:
-        # TODO: retrieve intent from Watson.
-        intent = "math"
 
         response = self.watson.send_message(command)
         intent = self.watson.get_intents(response)[0]["intent"]
         print(intent)
+        if intent == "stocks":
+            company_stock(command)
+        elif intent == "Weather":
+            weather_str = weather_information(command)
+            self.say_out_loud(weather_str)
+    def say_out_loud(self,text):
+        self.engine.say(text)
+        self.engine.runAndWait()
 
 
 action_obj = Action()
-action_obj.take_action("what is the current price of apple stock")
+action_obj.take_action("Texas weather")
