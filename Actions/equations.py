@@ -35,7 +35,6 @@ def preprocessed(input_equation):
             processed_equation += listToHyphenString(last_number)
     return processed_equation
 
-"eleven million three hundred twenty four thousand five hundred thirty two times fifty five times five times three hundred"
 
 def math(math_equation):
     equation = ""

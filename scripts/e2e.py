@@ -5,6 +5,6 @@ from Watson import Watson
 
 nlu = Watson()
 
-response = nlu.send_message("What is five time five times four")
+response = nlu.send_message("What is the weather in Canada")
 print(nlu.get_intents(response))
 
