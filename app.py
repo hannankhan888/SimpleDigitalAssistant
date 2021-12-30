@@ -56,12 +56,14 @@ class RootWindow(QMainWindow):
         self.buffer = []
         self.np_buffer = None
         self.threads = []
+        self.action_thread = None
         self.recording_thread = None
         self.listening_for_max_thread = None
         self.asr_print_thread = None
         self.model_name = model_name
         self.wav2vec_inference = Wave2Vec2Inference(self.model_name)
         # self.wav2vec_inference = Wave2Vec2Inference(self.model_name, lm_path=r"C:\Users\HannanKhan\Downloads\4-gram-librispeech.bin")
+        # self.action = Action
 
         self.setFixedWidth(self.WIDTH)
         self.setFixedHeight(self.HEIGHT)
@@ -269,6 +271,21 @@ class RootWindow(QMainWindow):
         self.window_frame.setLayout(self.window_frame_layout)
 
         self.main_frame_layout.addWidget(self.window_frame)
+
+    def _start_action_thread(self):
+        self.action_thread = threading.Thread(target=self._take_action)
+        self.action_thread.setDaemon(True)
+        self.action_thread.setName("action_thread")
+        self.threads.append(self.action_thread)
+        self.action_thread.start()
+
+    def _take_action(self):
+        # while True:
+        #     if self.transcribed_text:
+        #         self.action.take_action(self.transcribed_text)
+        #         self.transcribed_text = ""
+        pass
+
 
     def start_listening_for_max_thread(self):
         """ Starts a thread to open a stream and listen for the hotword 'max'.
