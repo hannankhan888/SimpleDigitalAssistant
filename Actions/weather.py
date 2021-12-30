@@ -19,9 +19,8 @@ def weather_information(city: str):
     time = soup.select('#wob_dts')[0].getText().strip()
     info = soup.select('#wob_dc')[0].getText().strip()
     weather = soup.select('#wob_tm')[0].getText().strip()
-    print(location + " " + time + " " + info + " " + weather + "°F")
-
-    return city
+    weather_str = location + " " + time + " " + info + " " + weather + "°F"
+    return weather_str
 
 
 if __name__ == "__main__":

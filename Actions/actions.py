@@ -27,10 +27,18 @@ class Action:
         elif intent == "Weather":
             weather_str = weather_information(command)
             self.say_out_loud(weather_str)
-    def say_out_loud(self,text):
+        elif intent == "wikipedia":
+            wiki_str = wiki_scrape(command)
+            self.say_out_loud(wiki_str)
+            # TODO wiki.py needs work
+        elif intent == "math":
+            equation_str = math(preprocessed(command))
+            self.say_out_loud(equation_str)
+
+    def say_out_loud(self, text):
         self.engine.say(text)
         self.engine.runAndWait()
 
 
 action_obj = Action()
-action_obj.take_action("Texas weather")
+action_obj.take_action("What five times five")

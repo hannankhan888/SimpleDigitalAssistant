@@ -26,6 +26,6 @@ def wiki_scrape(topic_name):
     except Exception as e:
         print(e)
 
+
 if __name__ == "__main__":
     wiki_scrape("India")
-    wiki_scrape("Orange")
