@@ -1,5 +1,6 @@
 import os
 
+
 def launch_app(program_name: str):
     try:
         first_word = program_name.split(' ', 1)[0]
@@ -11,5 +12,7 @@ def launch_app(program_name: str):
     except:
         print("The application cannot be found or opened.")
 
-launch_app(input("Enter the application you would like to launch: "))
-launch_app("Open notepad")
+
+if __name__ == "__main__":
+    launch_app(input("Enter the application you would like to launch: "))
+    launch_app("Open notepad")

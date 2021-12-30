@@ -2,7 +2,7 @@ from gtts import gTTS
 from bs4 import BeautifulSoup
 import winsound
 import requests
-def wiki(topic_name):
+def wiki_scrape(topic_name):
     try:
         user_request = topic_name
         response = requests.get(url="https://en.wikipedia.org/wiki/" + user_request)
@@ -29,5 +29,5 @@ def wiki(topic_name):
         print(e)
 
 if __name__ == "__main__":
-    wiki("India")
-    wiki("Orange")
+    wiki_scrape("India")
+    wiki_scrape("Orange")
