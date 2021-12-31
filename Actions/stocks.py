@@ -1,13 +1,12 @@
 import yfinance as yf
 import csv
 
-def get_symbol(user_stock_inquiry: str) -> str:
 
-    with open('../resources/symbols.csv', mode='r') as inp:
+def get_symbol(user_stock_inquiry: str) -> str:
+    with open('resources/symbols.csv', mode='r') as inp:
         reader = csv.reader(inp)
         stock_dict = {rows[0]: rows[1] for rows in reader}
-    stock_lower_dict = {k.lower(): v for(k, v) in stock_dict.items()}
-
+    stock_lower_dict = {k.lower(): v for (k, v) in stock_dict.items()}
 
     for key in stock_lower_dict:
         try:

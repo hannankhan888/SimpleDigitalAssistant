@@ -13,8 +13,9 @@ __version__ = "1.0"
 __maintainer__ = "Hannan Khan"
 __email__ = "hannankhan888@gmail.com"
 
-import sys
+import sys, os
 import threading
+import time
 
 from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtGui import QFont, QFontDatabase, QCursor
@@ -28,6 +29,7 @@ import pyaudio
 import numpy as np
 import sounddevice as sd
 from VoiceRecognition.Wav2vecLive.inference import Wave2Vec2Inference
+from Actions.actions import Action
 
 CHUNK = 1024
 SAMPLE_FORMAT = pyaudio.paInt16
@@ -42,6 +44,7 @@ class RootWindow(QMainWindow):
     automatic speech recognition."""
 
     def __init__(self, model_name):
+        print(os.getcwd())
         super(RootWindow, self).__init__()
 
         self.WIDTH = 1024
@@ -60,10 +63,11 @@ class RootWindow(QMainWindow):
         self.recording_thread = None
         self.listening_for_max_thread = None
         self.asr_print_thread = None
+        self.transcribed_text = ""
         self.model_name = model_name
         self.wav2vec_inference = Wave2Vec2Inference(self.model_name)
         # self.wav2vec_inference = Wave2Vec2Inference(self.model_name, lm_path=r"C:\Users\HannanKhan\Downloads\4-gram-librispeech.bin")
-        # self.action = Action
+        self.action = Action()
 
         self.setFixedWidth(self.WIDTH)
         self.setFixedHeight(self.HEIGHT)
@@ -101,6 +105,7 @@ class RootWindow(QMainWindow):
         self._init_sound_devices()
         self._init_bottom_main_frame()
         self._init_window_frame()
+        self._start_action_thread()
 
         self.main_frame_layout.addWidget(self.bottom_main_frame)
         self.main_frame.setLayout(self.main_frame_layout)
@@ -280,12 +285,12 @@ class RootWindow(QMainWindow):
         self.action_thread.start()
 
     def _take_action(self):
-        # while True:
-        #     if self.transcribed_text:
-        #         self.action.take_action(self.transcribed_text)
-        #         self.transcribed_text = ""
+        while True:
+            time.sleep(0.5)
+            if self.transcribed_text:
+                self.action.take_action(command=self.transcribed_text)
+                self.transcribed_text = ""
         pass
-
 
     def start_listening_for_max_thread(self):
         """ Starts a thread to open a stream and listen for the hotword 'max'.
