@@ -20,19 +20,21 @@ def get_symbol(user_stock_inquiry: str) -> str:
 
 
 def company_stock(user_inquiry):
+    stocks_str = ""
     ticker = get_symbol(user_inquiry.lower())
-    if ticker != None:
+    if ticker is not None:
         company = yf.Ticker(ticker)
 
         try:
-            company_stock = {'name': company.info['shortName'],
+            com_stock = {'name': company.info['shortName'],
                              'price': company.info['currentPrice'],
                              'recommendation': company.info['recommendationKey']}
-
+            stocks_str = f"{company.info['shortName']} Current Price is {company.info['currentPrice']}"
+            stocks_str += f" The recommendation is to {company.info['recommendationKey']}"
             print(company.info['shortName'] + " (" + company.info['symbol'] + ")")
             print("Current Price: ", company.info['currentPrice'])
             print("Recommendation: ", company.info['recommendationKey'])
-            return company_stock
+            return stocks_str
         except KeyError:
             print("Company cannot be found.")
 

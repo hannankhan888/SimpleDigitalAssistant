@@ -14,8 +14,7 @@ class Action:
     def __init__(self):
         self.engine = pyttsx3.init()
         self.watson = Watson()
-        self.engine.say("Hello")
-        self.engine.runAndWait()
+        self.engine.say("Hello, I'm Max.")
 
     def take_action(self, command: str) -> None:
 
@@ -23,7 +22,8 @@ class Action:
         intent = self.watson.get_intents(response)[0]["intent"]
         print(intent)
         if intent == "stocks":
-            company_stock(command)
+            stocks_str = company_stock(command)
+            self.say_out_loud(stocks_str)
         elif intent == "Weather":
             weather_str = weather_information(command)
             self.say_out_loud(weather_str)
@@ -40,5 +40,6 @@ class Action:
         self.engine.runAndWait()
 
 
-action_obj = Action()
-action_obj.take_action("What five times five")
+if __name__ == '__main__':
+    action_obj = Action()
+    action_obj.take_action("What five times five")
