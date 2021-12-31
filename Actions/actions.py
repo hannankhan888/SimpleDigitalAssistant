@@ -18,7 +18,11 @@ class Action:
     def take_action(self, command: str) -> None:
 
         response = self.watson.send_message(command)
-        intent = self.watson.get_intents(response)[0]["intent"]
+        print("response", response)
+        try:
+            intent = self.watson.get_intents(response)[0]["intent"]
+        except IndexError:
+            intent = 'default'
         print(intent)
         if intent == "stocks":
             stocks_str = company_stock(command)
@@ -33,6 +37,8 @@ class Action:
         elif intent == "math":
             equation_str = math(preprocessed(command))
             self.say_out_loud(equation_str)
+        elif intent == 'default':
+            self.say_out_loud("I didn't understand. You can try rephrasing.")
 
     def say_out_loud(self, text):
         self.engine.say(text)
