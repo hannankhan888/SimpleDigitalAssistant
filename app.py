@@ -44,7 +44,6 @@ class RootWindow(QMainWindow):
     automatic speech recognition."""
 
     def __init__(self, model_name):
-        print(os.getcwd())
         super(RootWindow, self).__init__()
 
         self.WIDTH = 1024
@@ -68,6 +67,7 @@ class RootWindow(QMainWindow):
         self.wav2vec_inference = Wave2Vec2Inference(self.model_name)
         # self.wav2vec_inference = Wave2Vec2Inference(self.model_name, lm_path=r"C:\Users\HannanKhan\Downloads\4-gram-librispeech.bin")
         self.action = Action()
+        self.action.say_out_loud("Hello, I'm Max.")
 
         self.setFixedWidth(self.WIDTH)
         self.setFixedHeight(self.HEIGHT)

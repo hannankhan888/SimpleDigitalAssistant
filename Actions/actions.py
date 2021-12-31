@@ -14,7 +14,6 @@ class Action:
     def __init__(self):
         self.engine = pyttsx3.init()
         self.watson = Watson()
-        self.engine.say("Hello, I'm Max.")
 
     def take_action(self, command: str) -> None:
 
