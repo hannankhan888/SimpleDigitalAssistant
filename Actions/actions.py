@@ -41,7 +41,7 @@ class Action:
             intent = 'default'
         print("intent:", intent)
         print("confidence:", confidence)
-        if confidence > 0.50:
+        if confidence > 0.30:
             if intent == "stocks":
                 result_str = company_stock(command)
             elif intent == "Weather":

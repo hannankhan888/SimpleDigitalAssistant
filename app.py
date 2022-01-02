@@ -165,6 +165,10 @@ class RootWindow(QMainWindow):
         self.output_device_num = self.output_device_dict['index']
         self.output_device_name = self.output_device_dict["name"]
 
+        self.stream = self.p.open(rate=SAMPLE_RATE, channels=CHANNELS, format=SAMPLE_FORMAT,
+                                  frames_per_buffer=CHUNK, input=True)
+
+
     def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
         self.mousePressPos = None
         self.mouseMovePos = None
@@ -308,8 +312,6 @@ class RootWindow(QMainWindow):
 
     def _listen_for_max(self):
         self.buffer = []
-        self.stream = self.p.open(rate=SAMPLE_RATE, channels=CHANNELS, format=SAMPLE_FORMAT,
-                                  frames_per_buffer=CHUNK, input=True)
         self.listening_for_max = True
 
         # data is of class 'bytes' and needs to converted into a numpy array.
@@ -324,8 +326,6 @@ class RootWindow(QMainWindow):
                 if "max" in transcribed_txt:
                     self._play_recorded_buffer_audio()
                     self.output_label.append(transcribed_txt)
-                    self.stream.stop_stream()
-                    self.stream.close()
                     self._start_recording_thread()
                     self.listening_for_max = False
         return
@@ -373,8 +373,6 @@ class RootWindow(QMainWindow):
         if self.recording:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             self.recording = False
-            self.stream.stop_stream()
-            self.stream.close()
             self._transcribe_and_print_buffer_audio()
             # self._play_recorded_buffer_audio()
             QApplication.setOverrideCursor(QCursor(Qt.ArrowCursor))
@@ -383,8 +381,6 @@ class RootWindow(QMainWindow):
             return
 
         self.buffer = []
-        self.stream = self.p.open(rate=SAMPLE_RATE, channels=CHANNELS, format=SAMPLE_FORMAT,
-                                  frames_per_buffer=CHUNK, input=True)
         self.recording = True
 
         # data is of class 'bytes' and needs to converted into a numpy array.
@@ -517,9 +513,14 @@ OTHER DEALINGS IN THE SOFTWARE."""
         self.recording = False
         self.listening_for_max = False
         self.should_take_action = False
-        self.p.terminate()
+
         for thread in self.threads:
             thread.join()
+
+        self.stream.stop_stream()
+        self.stream.close()
+        self.p.terminate()
+
         sys.exit(0)
 
 
