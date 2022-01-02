@@ -16,10 +16,9 @@ class Action:
         self.engine = pyttsx3.init()
         self.watson = Watson()
         self.spell = SpellChecker()
-        self.spell.word_frequency.load_words(["Google", "Chrome", "Bing"])
+        self.spell.word_frequency.load_text_file("./resources/spellcheck_dictionary.txt")
 
     def take_action(self, command: str) -> None:
-        # TODO: Create a word dicitonary in txt and update self.spell.
         print("command before spellcheck:", command)
         command = command.split()
         for idx, word in enumerate(command):
