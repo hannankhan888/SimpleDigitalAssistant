@@ -53,6 +53,7 @@ class RootWindow(QMainWindow):
         self.mouseMovePos = None
         self.listening_for_max = False
         self.recording = False
+        self.should_take_action = True
         self.p = None
         self.stream = None
         self.buffer = []
@@ -286,11 +287,12 @@ class RootWindow(QMainWindow):
 
     def _take_action(self):
         while True:
+            if not self.should_take_action:
+                return
             time.sleep(0.5)
             if self.transcribed_text:
                 self.action.take_action(command=self.transcribed_text)
                 self.transcribed_text = ""
-        pass
 
     def start_listening_for_max_thread(self):
         """ Starts a thread to open a stream and listen for the hotword 'max'.
@@ -513,6 +515,7 @@ OTHER DEALINGS IN THE SOFTWARE."""
     def exit_app(self) -> None:
         self.recording = False
         self.listening_for_max = False
+        self.should_take_action = False
         self.p.terminate()
         for thread in self.threads:
             thread.join()
@@ -524,7 +527,10 @@ def main():
     desktop = app.desktop()
 
     # gui = RootWindow(model_name="OthmaneJ/distil-wav2vec2")
-    gui = RootWindow(model_name="facebook/wav2vec2-large-960h")
+    # gui = RootWindow(model_name="speechbrain/asr-wav2vec2-commonvoice-en")
+
+    gui = RootWindow(model_name="jonatasgrosman/wav2vec2-large-english")
+    # gui = RootWindow(model_name="facebook/wav2vec2-large-960h")
 
     sys.exit(app.exec_())
 
