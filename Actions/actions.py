@@ -7,6 +7,7 @@ from stocks import get_symbol
 from stocks import company_stock
 from weather import weather_information
 from wiki import wiki_scrape
+from spellchecker import SpellChecker
 import pyttsx3
 
 
@@ -14,10 +15,21 @@ class Action:
     def __init__(self):
         self.engine = pyttsx3.init()
         self.watson = Watson()
+        self.spell = SpellChecker()
+        self.spell.word_frequency.load_words(["Google", "Chrome", "Bing"])
 
     def take_action(self, command: str) -> None:
-
+        # TODO: Create a word dicitonary in txt and update self.spell.
+        print("command before spellcheck:", command)
+        command = command.split()
+        for idx, word in enumerate(command):
+            if self.spell.unknown([word]):
+                command[idx] = self.spell.correction(word)
+        command = " ".join(command)
+        # misspelled = self.spell.unknown(command.split())
+        # command = " ".join(misspelled)
         response = self.watson.send_message(command)
+        print("command after spellcheck:", command)
         print("response", response)
         try:
             intent = self.watson.get_intents(response)[0]["intent"]
