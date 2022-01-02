@@ -29,8 +29,8 @@ def company_stock(user_inquiry):
             com_stock = {'name': company.info['shortName'],
                              'price': company.info['currentPrice'],
                              'recommendation': company.info['recommendationKey']}
-            stocks_str = f"{company.info['shortName']} Current Price is {company.info['currentPrice']}"
-            stocks_str += f" The recommendation is to {company.info['recommendationKey']}"
+            stocks_str = f"{company.info['shortName']} Current Price is {company.info['currentPrice']}."
+            stocks_str += f" The recommendation is to {company.info['recommendationKey']}."
             print(company.info['shortName'] + " (" + company.info['symbol'] + ")")
             print("Current Price: ", company.info['currentPrice'])
             print("Recommendation: ", company.info['recommendationKey'])

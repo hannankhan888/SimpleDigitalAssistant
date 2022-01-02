@@ -14,6 +14,7 @@ import pyttsx3
 class Action:
     def __init__(self):
         self.engine = pyttsx3.init()
+        self.engine.setProperty("rate", 170)
         self.watson = Watson()
         self.spell = SpellChecker()
         self.spell.word_frequency.load_text_file("./resources/spellcheck_dictionary.txt")
@@ -25,8 +26,6 @@ class Action:
             if self.spell.unknown([word]):
                 command[idx] = self.spell.correction(word)
         command = " ".join(command)
-        # misspelled = self.spell.unknown(command.split())
-        # command = " ".join(misspelled)
         response = self.watson.send_message(command)
         print("command after spellcheck:", command)
         print("response", response)
