@@ -27,26 +27,33 @@ class Action:
 
     def take_action(self, command: str) -> None:
         result_str = ""
+        intent = "default"
+        confidence = 0
         print("command before spellcheck:", command)
         command = self.spell_check(command)
         response = self.watson.send_message(command)
         print("command after spellcheck:", command)
-        print("response", response)
+        # print("response", response)
         try:
             intent = self.watson.get_intents(response)[0]["intent"]
+            confidence = self.watson.get_intents(response)[0]['confidence']
         except IndexError:
             intent = 'default'
         print("intent:", intent)
-        if intent == "stocks":
-            result_str = company_stock(command)
-        elif intent == "Weather":
-            result_str = weather_information(command)
-        elif intent == "wikipedia":
-            result_str = wiki_scrape(command)
-            # TODO wiki.py needs work
-        elif intent == "math":
-            result_str = custom_math(preprocessed(command))
-        elif intent == 'default':
+        print("confidence:", confidence)
+        if confidence > 0.50:
+            if intent == "stocks":
+                result_str = company_stock(command)
+            elif intent == "Weather":
+                result_str = weather_information(command)
+            elif intent == "wikipedia":
+                result_str = wiki_scrape(command)
+                # TODO wiki.py needs work
+            elif intent == "math":
+                result_str = custom_math(preprocessed(command))
+            elif intent == 'default':
+                result_str = "I didn't understand. You can try rephrasing."
+        else:
             result_str = "I didn't understand. You can try rephrasing."
 
         self.say_out_loud(result_str)
