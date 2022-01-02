@@ -1,21 +1,33 @@
-import pyaudio
-import webrtcvad
-from inference import Wave2Vec2Inference
-import numpy as np
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# __author__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
+# __copyright__ = "Copyright 2022, SimpleDigitalAssistant"
+# __credits__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
+# __license__ = "MIT"
+# __version__ = "1.0"
+# __maintainer__ = "Hannan Khan"
+# __email__ = "hannankhan888@gmail.com"
+
 import threading
 import time
+from queue import Queue
 from sys import exit
-import contextvars
-from queue import  Queue
-import os
+
+import numpy as np
+import pyaudio
+import webrtcvad
+
+from inference import Wave2Vec2Inference
 
 
 class LiveWav2Vec2:
-    exit_event = threading.Event()    
+    exit_event = threading.Event()
+
     def __init__(self, model_name, lm_path=None, device_name="default"):
         self.model_name = model_name
-        self.device_name = device_name  
-        self.lm_path = lm_path            
+        self.device_name = device_name
+        self.lm_path = lm_path
 
     def stop(self):
         """stop the asr process"""
@@ -66,16 +78,16 @@ class LiveWav2Vec2:
                             input=True,
                             frames_per_buffer=CHUNK)
 
-        frames = b'' 
-        frames_tag = [] # holds boolean of whether speech was detected
-        end_frame = 0  
+        frames = b''
+        frames_tag = []  # holds boolean of whether speech was detected
+        end_frame = 0
         exit_time = None
-        while True:         
+        while True:
             if LiveWav2Vec2.exit_event.is_set():
-                break            
+                break
             frame = stream.read(CHUNK)
             frames_tag.append(vad.is_speech(frame, RATE))
-            
+
             # add frames only if voice is detected
             if frames_tag[-1]:
                 frames += frame
@@ -103,14 +115,13 @@ class LiveWav2Vec2:
         audio.terminate()
         self.stop()
 
-
     def asr_process(self, model_name, in_queue, output_queue):
         wave2vec_asr = Wave2Vec2Inference(model_name, self.lm_path)
         self.wav2vec2_initialized = True
 
         print("\nlistening to your voice\n")
-        while True:                        
-            audio_frames = in_queue.get()       
+        while True:
+            audio_frames = in_queue.get()
             if audio_frames == "close":
                 break
 
@@ -118,10 +129,10 @@ class LiveWav2Vec2:
                 audio_frames, dtype=np.int16) / 32767
             start = time.perf_counter()
             text = wave2vec_asr.buffer_to_text(float64_buffer).lower()
-            inference_time = time.perf_counter()-start
+            inference_time = time.perf_counter() - start
             sample_length = len(float64_buffer) / 16000  # length in sec
             if text != "":
-                output_queue.put([text,sample_length,inference_time])                            
+                output_queue.put([text, sample_length, inference_time])
 
     def get_input_device_id(device_name, microphones):
         for device in microphones:
@@ -142,7 +153,8 @@ class LiveWav2Vec2:
 
     def get_last_text(self):
         """returns the text, sample length and inference time in seconds."""
-        return self.asr_output_queue.get()           
+        return self.asr_output_queue.get()
+
 
 if __name__ == "__main__":
     print("Live ASR")
@@ -156,11 +168,11 @@ if __name__ == "__main__":
     asr = LiveWav2Vec2(model_name=MODELS["distil"], lm_path=LM)
     asr.start()
 
-    try:        
+    try:
         while True:
-            text,sample_length,inference_time = asr.get_last_text()                        
+            text, sample_length, inference_time = asr.get_last_text()
             print(f"{sample_length:.3f}s\t{inference_time:.3f}s\t{text}")
-            
+
     except KeyboardInterrupt:
-        asr.stop()  
+        asr.stop()
         exit()

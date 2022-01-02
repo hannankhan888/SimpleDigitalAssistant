@@ -12,8 +12,8 @@ __maintainer__ = "Hannan Khan"
 __email__ = "hannankhan888@gmail.com"
 
 from PyQt5 import QtGui, QtWidgets, QtCore
-from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QMainWindow
 
 from dynamicPyQt5Labels import ColorChangingLabel, CustomButton, ScrollableLabel
 

@@ -1,3 +1,14 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+__author__ = ["Hannan Khan"]
+__copyright__ = "Copyright 2022, SimpleDigitalAssistant"
+__credits__ = ["Hannan Khan"]
+__license__ = "MIT"
+__version__ = "1.0"
+__maintainer__ = "Hannan Khan"
+__email__ = "hannankhan888@gmail.com"
+
 import librosa
 from audiomentations import Compose, AddGaussianNoise, PitchShift, TimeStretch, Shift
 from scipy.io.wavfile import write
@@ -94,14 +105,11 @@ def main():
     #     write(output_path + f"stretched_harvard_factor{i + 1}.wav", sample_rate, time_stretch_output)
 
     noisy_arr, pitched_arr, stretched_arr, shifted_arr = augment_audio_file(path, sample_rate)
-    write(output_path+f"noisy_harvard.wav", sample_rate, noisy_arr)
-    write(output_path+f"pitched_harvard.wav", sample_rate, pitched_arr)
-    write(output_path+f"stretched_harvard.wav", sample_rate, stretched_arr)
-    write(output_path+f"shifted_harvard.wav", sample_rate, shifted_arr)
+    write(output_path + f"noisy_harvard.wav", sample_rate, noisy_arr)
+    write(output_path + f"pitched_harvard.wav", sample_rate, pitched_arr)
+    write(output_path + f"stretched_harvard.wav", sample_rate, stretched_arr)
+    write(output_path + f"shifted_harvard.wav", sample_rate, shifted_arr)
 
 
 if __name__ == "__main__":
     main()
-
-
-# TODO: add a way to concatenate our personal training files to the dataset.

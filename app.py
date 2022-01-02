@@ -3,7 +3,8 @@
 
 """ This file contains the GUI for the SimpleDigitalAssistant application.
     This application is made specifically for Windows OS, and can be used
-    to accomplish small tasks via voice recognition (using pre-trained models)."""
+    to accomplish small tasks via automatic speech recognition (using pre-trained
+    models)."""
 
 __author__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
 __copyright__ = "Copyright 2022, SimpleDigitalAssistant"
@@ -13,24 +14,24 @@ __version__ = "1.0"
 __maintainer__ = "Hannan Khan"
 __email__ = "hannankhan888@gmail.com"
 
-import os
 import sys
 import threading
 import time
 
+import numpy as np
+import pyaudio
+import sounddevice as sd
 from PyQt5 import QtWidgets, QtGui
-from PyQt5.QtGui import QFont, QFontDatabase, QCursor, QPixmap
-from PyQt5.QtWidgets import QMainWindow, QApplication, QDesktopWidget, QFrame, QSplashScreen
-from PyQt5.QtWidgets import QHBoxLayout, QLabel, QVBoxLayout
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QFont, QFontDatabase, QCursor, QPixmap
+from PyQt5.QtWidgets import QHBoxLayout, QLabel, QVBoxLayout
+from PyQt5.QtWidgets import QMainWindow, QApplication, QDesktopWidget, QFrame, QSplashScreen
+
+from Actions.actions import Action
+from VoiceRecognition.Wav2vecLive.inference import Wave2Vec2Inference
 from utils.dynamicPyQt5Labels import CustomButton
 from utils.dynamicPyQt5Labels import ImageChangingLabel, ImageBackgroundChangingLabel
 from utils.framelessDialogs import FramelessMessageDialog, FramelessScrollableMessageDialog
-import pyaudio
-import numpy as np
-import sounddevice as sd
-from VoiceRecognition.Wav2vecLive.inference import Wave2Vec2Inference
-from Actions.actions import Action
 
 CHUNK = 1024
 SAMPLE_FORMAT = pyaudio.paInt16
@@ -163,6 +164,7 @@ class RootWindow(QMainWindow):
         self.input_device_dict = pyaudio.PyAudio.get_default_input_device_info(self.p)
         self.input_device_idx = self.input_device_dict['index']
         self.input_device_name = self.input_device_dict["name"]
+        # max input channels is 1
         self.input_channels = self.input_device_dict['maxInputChannels']
         # default sampleRate is 44100
         self.default_sample_rate = self.input_device_dict['defaultSampleRate']
@@ -270,7 +272,8 @@ class RootWindow(QMainWindow):
         self.minimize_button_label.setFont(QFont(self.lato_font_family, 10))
         self.wf_right_layout.addWidget(self.minimize_button_label)
 
-        self.close_button_label = CustomButton(self.clean_exit_app, self.normal_bg, self.close_button_label_highlight_bg,
+        self.close_button_label = CustomButton(self.clean_exit_app, self.normal_bg,
+                                               self.close_button_label_highlight_bg,
                                                self.normal_color, self.close_button_label_highlight_color)
         self.close_button_label.setToolTip("Close")
         self.close_button_label.setText("   /   ")
@@ -288,6 +291,9 @@ class RootWindow(QMainWindow):
         self.main_frame_layout.addWidget(self.window_frame)
 
     def _start_action_thread(self):
+        """ Starts the thread that waits for commands to be transcribed so it can
+        take action based on the command."""
+
         self.action_thread = threading.Thread(target=self._take_action)
         self.action_thread.setDaemon(True)
         self.action_thread.setName("action_thread")
@@ -396,7 +402,7 @@ class RootWindow(QMainWindow):
             self.buffer.append(data)
             if len(self.buffer) > 30:
                 # if the last 15 frames are silence, end the command.
-                if self._transcribe_custom_buffer_audio(self.buffer[-15:]) == "":
+                if self._transcribe_custom_length_buffer_audio(self.buffer[-15:]) == "":
                     self.get_voice_command()
                     return
 
@@ -424,10 +430,13 @@ class RootWindow(QMainWindow):
         sd.play(self.np_buffer, SAMPLE_RATE)
 
     def _transcribe_buffer_audio(self) -> str:
+        """ Converts the current buffer into numpy array and gets a transcription from
+        the currently loaded model."""
+
         self._get_np_buffer()
         return self.wav2vec_inference.buffer_to_text(self.np_buffer).lower()
 
-    def _transcribe_custom_buffer_audio(self, buffer) -> str:
+    def _transcribe_custom_length_buffer_audio(self, buffer) -> str:
         numpy_buffer = np.frombuffer(b''.join(buffer), dtype=NUMPY_DATATYPE) / 32767
         return self.wav2vec_inference.buffer_to_text(numpy_buffer).lower()
 
@@ -442,6 +451,8 @@ class RootWindow(QMainWindow):
         self.output_label.moveCursor(QtGui.QTextCursor.End)
 
     def _update_threads(self):
+        """ Cleans up the list of threads by joining and deleting old, stopped threads."""
+
         if self.threads:
             for idx, thread in enumerate(self.threads):
                 if not thread.is_alive():
@@ -482,6 +493,8 @@ class RootWindow(QMainWindow):
         pass
 
     def license(self) -> None:
+        """ This function makes a scrollable license dialog."""
+
         license_str = """
 MIT License
 
@@ -518,21 +531,34 @@ OTHER DEALINGS IN THE SOFTWARE."""
         self.showMinimized()
 
     def _set_vars_to_false(self):
+        """ Sets all vars that run threads to false."""
+
         self.recording = False
         self.listening_for_max = False
         self.should_take_action = False
 
     def _close_connections(self):
+        """ Closes all connections started by this app."""
+
         self.stream.stop_stream()
         self.stream.close()
         self.p.terminate()
 
     def _dirty_exit_app(self):
+        """ Exits the app in a dirty way. This function is called from the background
+        action_thread. It uses a global variable QApplication to cause the whole
+        application to quit at once. This means the threads are not joined in a proper
+        manner, and cannot be, since a sub-thread is called this function."""
+
         self._set_vars_to_false()
         self._close_connections()
         QApplication.quit()
 
     def clean_exit_app(self) -> None:
+        """ Cleanly exits the app by setting all vars to false (thereby stopping all threads),
+        joining all threads that are not stopped yet. Then closing all connections opened
+        by this app before exiting."""
+
         self._set_vars_to_false()
 
         for thread in self.threads:

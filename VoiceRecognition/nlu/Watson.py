@@ -1,10 +1,23 @@
-import json
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# __author__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
+# __copyright__ = "Copyright 2022, SimpleDigitalAssistant"
+# __credits__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
+# __license__ = "MIT"
+# __version__ = "1.0"
+# __maintainer__ = "Hannan Khan"
+# __email__ = "hannankhan888@gmail.com"
+
 import os
-from ibm_watson import AssistantV2
-from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+
 from dotenv import load_dotenv
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+from ibm_watson import AssistantV2
 
 load_dotenv()
+
+
 class Watson():
     def __init__(self):
         authenticator = IAMAuthenticator(os.getenv('KEY'))
@@ -39,7 +52,7 @@ class Watson():
             input={
                 'message_type': 'text',
                 'text': input
-        }).get_result()
+            }).get_result()
 
         return response
 
@@ -49,10 +62,8 @@ class Watson():
     def get_intents(self, response):
         return response["output"]["intents"]
 
+
 if __name__ == "__main__":
     watson = Watson()
     response = watson.send_message("what is the current price of apple stock")
     print(watson.get_intents(response))
-
-
-

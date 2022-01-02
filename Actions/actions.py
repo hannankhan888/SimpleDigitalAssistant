@@ -1,14 +1,23 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# __author__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
+# __copyright__ = "Copyright 2022, SimpleDigitalAssistant"
+# __credits__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
+# __license__ = "MIT"
+# __version__ = "1.0"
+# __maintainer__ = "Hannan Khan"
+# __email__ = "hannankhan888@gmail.com"
+
+import pyttsx3
+from spellchecker import SpellChecker
+
 from VoiceRecognition.nlu.Watson import Watson
-from equations import listToHyphenString
-from equations import preprocessed
 from equations import custom_math
-from launchapp import launch_app
-from stocks import get_symbol
+from equations import preprocessed
 from stocks import company_stock
 from weather import weather_information
 from wiki import wiki_scrape
-from spellchecker import SpellChecker
-import pyttsx3
 
 
 class Action:
@@ -70,6 +79,8 @@ class Action:
         return " ".join(command)
 
     def say_out_loud(self, text):
+        """ Says a string out loud to the best of its ability."""
+
         self.engine.say(text)
         self.engine.runAndWait()
 

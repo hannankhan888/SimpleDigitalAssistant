@@ -1,3 +1,14 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# __author__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
+# __copyright__ = "Copyright 2022, SimpleDigitalAssistant"
+# __credits__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
+# __license__ = "MIT"
+# __version__ = "1.0"
+# __maintainer__ = "Hannan Khan"
+# __email__ = "hannankhan888@gmail.com"
+
 from bs4 import BeautifulSoup
 import requests
 def wiki_scrape(topic_name):

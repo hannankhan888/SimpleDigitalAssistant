@@ -1,5 +1,17 @@
-import yfinance as yf
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# __author__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
+# __copyright__ = "Copyright 2022, SimpleDigitalAssistant"
+# __credits__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
+# __license__ = "MIT"
+# __version__ = "1.0"
+# __maintainer__ = "Hannan Khan"
+# __email__ = "hannankhan888@gmail.com"
+
 import csv
+
+import yfinance as yf
 
 
 def get_symbol(user_stock_inquiry: str) -> str:
@@ -49,4 +61,4 @@ if __name__ == "__main__":
     company_stock("show me GOOGLE stock")  # stock that exists but all caps
     company_stock("tell me the stock price of facebook")  # stock for a company with quotations around it
     # TODO: run through these new test cases i made up after testing via max:
-    company_stock("what's the price of golestock") # should not return a stock at all.
+    company_stock("what's the price of golestock")  # should not return a stock at all.

@@ -1,13 +1,25 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# __author__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
+# __copyright__ = "Copyright 2022, SimpleDigitalAssistant"
+# __credits__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
+# __license__ = "MIT"
+# __version__ = "1.0"
+# __maintainer__ = "Hannan Khan"
+# __email__ = "hannankhan888@gmail.com"
+
+import re
 import time
+
 import soundfile as sf
 import torch
-from transformers import Wav2Vec2Processor, Wav2Vec2ForCTC
-from pyctcdecode import build_ctcdecoder
-from tqdm import tqdm
-
 # for testing
 from datasets import load_dataset, load_metric
-import re
+from pyctcdecode import build_ctcdecoder
+from tqdm import tqdm
+from transformers import Wav2Vec2Processor, Wav2Vec2ForCTC
+
 
 class Wave2Vec2Inference():
     def __init__(self, model_name, lm_path=None):
@@ -20,16 +32,15 @@ class Wave2Vec2Inference():
         vocab_dict = self.processor.tokenizer.get_vocab()
         sorted_dict = {k.lower(): v for k, v in sorted(vocab_dict.items(), key=lambda item: item[1])}
         if lm_path:
-            alpha=0
-            beta=0
+            alpha = 0
+            beta = 0
             beam_width = 1024
             self.decoder = build_ctcdecoder(list(sorted_dict.keys()), lm_path)
         else:
             self.decoder = None
 
-
     def buffer_to_text(self, audio_buffer):
-        if(len(audio_buffer)==0):
+        if (len(audio_buffer) == 0):
             return ""
 
         inputs = self.processor(audio_buffer, sampling_rate=16000, return_tensors="pt").to(self.device)
@@ -46,15 +57,16 @@ class Wave2Vec2Inference():
 
         return transcription.lower()
 
-    def file_to_text(self,filename):
+    def file_to_text(self, filename):
         audio_input, samplerate = sf.read(filename)
         assert samplerate == 16000
         return self.buffer_to_text(audio_input)
 
+
 class TestWav2Vec2(Wave2Vec2Inference):
     def __init__(self, model_name, lm_path=None):
-        super().__init__(model_name, lm_path=lm_path) 
-        self.TEST_SIZE = 100   
+        super().__init__(model_name, lm_path=lm_path)
+        self.TEST_SIZE = 100
         self.model_name = model_name
 
     def compute_wer(self):
@@ -68,7 +80,8 @@ class TestWav2Vec2(Wave2Vec2Inference):
         print("Getting predictions...")
         results = map(self.buffer_to_text, tqdm(timit_test["audio"]))
         wer_metric = load_metric("wer")
-        print(f"Test WER for {self.model_name}: {wer_metric.compute(predictions=results, references=timit_test['text']):.3f}")
+        print(
+            f"Test WER for {self.model_name}: {wer_metric.compute(predictions=results, references=timit_test['text']):.3f}")
 
         return {"og": timit_test["text"], "pred": results}
 
@@ -76,6 +89,7 @@ class TestWav2Vec2(Wave2Vec2Inference):
         chars_to_ignore_regex = '[\,\?\.\!\-\;\:\"]'
         batch["text"] = re.sub(chars_to_ignore_regex, '', batch["text"]).lower() + " "
         return batch
+
 
 if __name__ == "__main__":
     print("Model test")
@@ -87,11 +101,11 @@ if __name__ == "__main__":
     }
     LM = "../4gram_big.arpa"
     start = time.time()
-    asr = Wave2Vec2Inference(model_name=MODELS["distil"],lm_path=LM)
-    print(f"time to initialize obect was {time.time()-start}")
+    asr = Wave2Vec2Inference(model_name=MODELS["distil"], lm_path=LM)
+    print(f"time to initialize obect was {time.time() - start}")
     text = asr.file_to_text("resources/augmented_audio_files/noisy_harvard.wav")
     print(text)
-    
+
     # distil_no_lm = TestWav2Vec2(model_name=MODELS["distil"],lm_path=None) # WER = 0.268 on 100 samples
     # distil_no_lm.compute_wer()
     # distil_with_lm = TestWav2Vec2(model_name=MODELS["distil"],lm_path=LM) # WER = 0.152 on 100 samples
