@@ -18,15 +18,11 @@ class Action:
         self.watson = Watson()
         self.spell = SpellChecker()
         self.spell.word_frequency.load_text_file("./resources/spellcheck_dictionary.txt")
-        self.spell.export("./my_custom_dictionary.gz", gzipped=True)
+        # self.spell.export("./my_custom_dictionary.gz", gzipped=True)
 
     def take_action(self, command: str) -> None:
         print("command before spellcheck:", command)
-        command = command.split()
-        for idx, word in enumerate(command):
-            if self.spell.unknown([word]):
-                command[idx] = self.spell.correction(word)
-        command = " ".join(command)
+        command = self.spell_check(command)
         response = self.watson.send_message(command)
         print("command after spellcheck:", command)
         print("response", response)
@@ -34,7 +30,7 @@ class Action:
             intent = self.watson.get_intents(response)[0]["intent"]
         except IndexError:
             intent = 'default'
-        print(intent)
+        print("intent:", intent)
         if intent == "stocks":
             stocks_str = company_stock(command)
             self.say_out_loud(stocks_str)
@@ -50,6 +46,16 @@ class Action:
             self.say_out_loud(equation_str)
         elif intent == 'default':
             self.say_out_loud("I didn't understand. You can try rephrasing.")
+
+    def spell_check(self, command: str) -> str:
+        """:returns The command string after it has been spellchecked."""
+        command = command.split()
+
+        for idx, word in enumerate(command):
+            if self.spell.unknown([word]):
+                command[idx] = self.spell.correction(word)
+
+        return " ".join(command)
 
     def say_out_loud(self, text):
         self.engine.say(text)
