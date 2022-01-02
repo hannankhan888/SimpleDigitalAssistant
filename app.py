@@ -13,7 +13,7 @@ __version__ = "1.0"
 __maintainer__ = "Hannan Khan"
 __email__ = "hannankhan888@gmail.com"
 
-import sys, os
+import sys
 import threading
 import time
 
@@ -68,7 +68,6 @@ class RootWindow(QMainWindow):
         self.wav2vec_inference = Wave2Vec2Inference(self.model_name)
         # self.wav2vec_inference = Wave2Vec2Inference(self.model_name, lm_path=r"C:\Users\HannanKhan\Downloads\4-gram-librispeech.bin")
         self.action = Action()
-        self.action.say_out_loud("Hello, I'm Max.")
 
         self.setFixedWidth(self.WIDTH)
         self.setFixedHeight(self.HEIGHT)
@@ -114,6 +113,7 @@ class RootWindow(QMainWindow):
         self.setCentralWidget(self.main_frame)
         self.start_listening_for_max_thread()
         self.show()
+        self.action.say_out_loud("Hello, I'm Max.")
 
     def _init_bottom_main_frame(self) -> None:
         self.bottom_main_frame = QFrame()
@@ -167,7 +167,6 @@ class RootWindow(QMainWindow):
 
         self.stream = self.p.open(rate=SAMPLE_RATE, channels=CHANNELS, format=SAMPLE_FORMAT,
                                   frames_per_buffer=CHUNK, input=True)
-
 
     def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
         self.mousePressPos = None
