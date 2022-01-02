@@ -27,8 +27,8 @@ def company_stock(user_inquiry):
 
         try:
             com_stock = {'name': company.info['shortName'],
-                             'price': company.info['currentPrice'],
-                             'recommendation': company.info['recommendationKey']}
+                         'price': company.info['currentPrice'],
+                         'recommendation': company.info['recommendationKey']}
             stocks_str = f"{company.info['shortName']} Current Price is {company.info['currentPrice']}."
             stocks_str += f" The recommendation is to {company.info['recommendationKey']}."
             print(company.info['shortName'] + " (" + company.info['symbol'] + ")")
@@ -36,7 +36,7 @@ def company_stock(user_inquiry):
             print("Recommendation: ", company.info['recommendationKey'])
             return stocks_str
         except KeyError:
-            print("Company cannot be found.")
+            return "The company symbol cannot be found."
 
     else:
         print("The company symbol cannot be found.")

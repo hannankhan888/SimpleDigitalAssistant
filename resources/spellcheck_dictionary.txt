@@ -9,3 +9,519 @@ Microsoft
 Bing
 Tesla
 Hyderabad
+Minus
+plus
+times
+
+
+
+
+
+
+BELOW ARE ALL THE STOCK COMPANY NAMES:
+3m company
+abbott laboratories
+abbvie inc.
+abiomed inc
+accenture plc
+activision blizzard
+adobe systems inc
+advanced micro devices inc
+advance auto parts
+aes corp
+aflac inc
+agilent technologies inc
+air products & chemicals inc
+akamai technologies inc
+alaska air group inc
+albemarle corp
+alexandria real estate equities
+alexion pharmaceuticals
+align technology
+allegion
+allergan
+alliance data systems
+alliant energy corp
+allstate corp
+alphabet inc class a
+alphabet inc class c
+altria group inc
+amazon.com inc.
+amcor plc
+ameren corp
+american airlines group
+american electric power
+american express co
+american international group
+american tower corp.
+american water works company inc
+ameriprise financial
+amerisourcebergen corp
+ametek inc.
+amgen inc.
+amphenol corp
+analog devices
+ansys
+anthem
+aon plc
+a.o. smith corp
+apache corporation
+apartment investment & management
+apple inc.
+applied materials inc.
+aptiv plc
+archer-daniels-midland co
+arconic inc.
+arista networks
+arthur j. gallagher & co.
+assurant
+atmos energy corp
+at&t inc.
+autodesk inc.
+automatic data processing
+autozone inc
+avalonbay communities
+avery dennison corp
+baker hughes co
+ball corp
+bank of america corp
+the bank of new york mellon corp.
+baxter international inc.
+becton dickinson
+berkshire hathaway
+best buy co. inc.
+biogen inc.
+google
+blackrock
+boeing company
+booking holdings inc
+borgwarner
+boston properties
+boston scientific
+bristol-myers squibb
+broadcom inc.
+broadridge financial solutions
+brown-forman corp.
+c. h. robinson worldwide
+cabot oil & gas
+cadence design systems
+campbell soup
+capital one financial
+capri holdings
+cardinal health inc.
+carmax inc
+carnival corp.
+caterpillar inc.
+cboe global markets
+cbre group
+cdw
+celanese
+centene corporation
+centerpoint energy
+centurylink inc
+cerner
+cf industries holdings inc
+charles schwab corporation
+charter communications
+chevron corp.
+chipotle mexican grill
+chubb limited
+church & dwight
+cigna corp.
+cimarex energy
+cincinnati financial
+cintas corporation
+cisco systems
+citigroup inc.
+citizens financial group
+citrix systems
+the clorox company
+cme group inc.
+cms energy
+coca-cola company
+cognizant technology solutions
+colgate-palmolive
+comcast corp.
+comerica inc.
+conagra brands
+concho resources
+conocophillips
+consolidated edison
+constellation brands
+the cooper companies
+copart inc
+corning inc.
+corteva
+costco wholesale corp.
+coty
+crown castle international corp.
+csx corp.
+cummins inc.
+cvs health
+d. r. horton
+danaher corp.
+darden restaurants
+davita inc.
+deere & co.
+delta air lines inc.
+dentsply sirona
+devon energy
+diamondback energy
+digital realty trust inc
+discover financial services
+discovery inc. class a
+discovery inc. class c
+dish network
+dollar general
+dollar tree
+dominion energy
+dover corp.
+dow inc.
+dte energy co.
+duke energy
+duke realty corp
+dupont de nemours inc
+dxc technology
+e*trade
+eastman chemical
+eaton corporation
+ebay inc.
+ecolab inc.
+edison int'l
+edwards lifesciences
+electronic arts
+emerson electric company
+entergy corp.
+eog resources
+equifax inc.
+equinix
+equity residential
+essex property trust
+estee lauder cos.
+evergy
+eversource energy
+everest re group ltd.
+exelon corp.
+expedia group
+expeditors
+extra space storage
+exxon mobil corp.
+f5 networks
+facebook
+fastenal co
+federal realty investment trust
+fedex corporation
+fidelity national information services
+fifth third bancorp
+firstenergy corp
+first republic bank
+fiserv inc
+fleetcor technologies inc
+flir systems
+flowserve corporation
+fmc corporation
+ford motor
+fortinet
+fortive corp
+fortune brands home & security
+fox corporation class a
+fox corporation class b
+franklin resources
+freeport-mcmoran inc.
+gap inc.
+garmin ltd.
+gartner inc
+general dynamics
+general electric
+general mills
+general motors
+genuine parts
+gilead sciences
+globe life inc.
+global payments inc.
+goldman sachs group
+grainger (w.w.) inc.
+h&r block
+halliburton co.
+hanesbrands inc
+harley-davidson
+hartford financial svc.gp.
+hasbro inc.
+hca healthcare
+healthpeak properties
+helmerich & payne
+henry schein
+the hershey company
+hess corporation
+hewlett packard enterprise
+hilton worldwide holdings inc
+hollyfrontier corp
+hologic
+home depot
+honeywell int'l inc.
+hormel foods corp.
+host hotels & resorts
+hp inc.
+humana inc.
+huntington bancshares
+huntington ingalls industries
+idex corporation
+idexx laboratories
+ihs markit ltd.
+illinois tool works
+illumina inc
+ingersoll-rand plc
+intel corp.
+intercontinental exchange
+international business machines
+incyte
+international paper
+interpublic group
+intl flavors & fragrances
+intuit inc.
+intuitive surgical inc.
+invesco ltd.
+ipg photonics corp.
+iqvia holdings inc.
+iron mountain incorporated
+jack henry & associates
+jacobs engineering group
+j. b. hunt transport services
+jm smucker
+johnson & johnson
+johnson controls international
+jpmorgan chase & co.
+juniper networks
+kansas city southern
+kellogg co.
+keycorp
+keysight technologies
+kimberly-clark
+kimco realty
+kinder morgan
+kla corporation
+kohl's corp.
+kraft heinz co
+kroger co.
+l brands inc.
+l3harris technologies
+laboratory corp. of america holding
+lam research
+lamb weston holdings inc
+las vegas sands
+leggett & platt
+leidos holdings
+lennar corp.
+lilly (eli) & co.
+lincoln national
+linde plc
+live nation entertainment
+lkq corporation
+lockheed martin corp.
+loews corp.
+lowe's cos.
+lyondellbasell
+m&t bank corp.
+macy's inc.
+marathon oil corp.
+marathon petroleum
+marketaxess
+marriott int'l.
+marsh & mclennan
+martin marietta materials
+masco corp.
+mastercard inc.
+mccormick & co.
+maxim integrated products inc
+mcdonald's corp.
+mckesson corp.
+medtronic plc
+merck & co.
+metlife inc.
+mettler toledo
+mgm resorts international
+microchip technology
+micron technology
+microsoft corp.
+mid-america apartments
+mohawk industries
+molson coors brewing company
+mondelez international
+monster beverage
+moody's corp
+morgan stanley
+the mosaic company
+motorola solutions inc.
+msci inc
+mylan n.v.
+nasdaq
+national oilwell varco inc.
+netapp
+netflix inc.
+newell brands
+newmont goldcorp
+news corp. class a
+news corp. class b
+nextera energy
+nielsen holdings
+nike
+nisource inc.
+noble energy inc
+nordstrom
+norfolk southern corp.
+northern trust corp.
+northrop grumman
+nortonlifelock
+norwegian cruise line holdings
+nrg energy
+nucor corp.
+nvidia corporation
+nvr inc
+o'reilly automotive
+occidental petroleum
+old dominion freight line
+omnicom group
+oneok
+oracle corp.
+paccar inc.
+packaging corporation of america
+parker-hannifin
+paychex inc.
+paypal
+pentair plc
+people's united financial
+pepsico inc.
+perkinelmer
+perrigo
+pfizer inc.
+philip morris international
+phillips 66
+pinnacle west capital
+pioneer natural resources
+pnc financial services
+ppg industries
+ppl corp.
+principal financial group
+procter & gamble
+progressive corp.
+prologis
+prudential financial
+public serv. enterprise inc.
+public storage
+pulte homes inc.
+pvh corp.
+qorvo
+quanta services inc.
+qualcomm inc.
+quest diagnostics
+ralph lauren corporation
+raymond james financial inc.
+raytheon co.
+realty income corporation
+regency centers corporation
+regeneron pharmaceuticals
+regions financial corp.
+republic services inc
+resmed
+robert half international
+rockwell automation inc.
+rollins inc.
+roper technologies
+ross stores
+royal caribbean cruises ltd
+s&p global
+salesforce.com
+sba communications
+schlumberger ltd.
+seagate technology
+sealed air
+sempra energy
+servicenow
+sherwin-williams
+simon property group inc
+skyworks solutions
+sl green realty
+snap-on
+southern co.
+southwest airlines
+stanley black & decker
+starbucks corp.
+state street corp.
+steris plc
+stryker corp.
+svb financial
+synchrony financial
+synopsys inc.
+sysco corp.
+t-mobile us
+t. rowe price group
+take-two interactive
+tapestry
+target corp.
+te connectivity ltd.
+technipfmc
+teleflex
+texas instruments
+textron inc.
+thermo fisher scientific
+tiffany & co.
+tjx companies inc.
+tractor supply company
+transdigm group
+the travelers companies inc.
+truist financial
+twitter
+tyson foods
+udr
+ulta beauty
+u.s. bancorp
+under armour class a
+under armour class c
+union pacific corp
+united airlines holdings
+united health group inc.
+united parcel service
+united rentals
+united technologies
+universal health services
+unum group
+v.f. corp.
+valero energy
+varian medical systems
+ventas inc
+verisign inc.
+verisk analytics
+verizon communications
+vertex pharmaceuticals inc
+viacomcbs
+visa inc.
+vornado realty trust
+vulcan materials
+w. r. berkley corporation
+wabtec corporation
+walmart
+walgreens boots alliance
+the walt disney company
+waste management inc.
+waters corporation
+wec energy group inc
+wellcare
+wells fargo
+welltower inc.
+western digital
+western union co
+westrock
+weyerhaeuser
+whirlpool corp.
+williams cos.
+willis towers watson
+wynn resorts ltd
+xcel energy inc
+xerox
+xilinx
+xylem inc.
+yum! brands inc
+zebra technologies
+zimmer biomet holdings
+zions bancorp
+zoetis
