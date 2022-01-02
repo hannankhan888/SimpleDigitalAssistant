@@ -18,8 +18,8 @@ import threading
 import time
 
 from PyQt5 import QtWidgets, QtGui
-from PyQt5.QtGui import QFont, QFontDatabase, QCursor
-from PyQt5.QtWidgets import QMainWindow, QApplication, QDesktopWidget, QFrame
+from PyQt5.QtGui import QFont, QFontDatabase, QCursor, QPixmap
+from PyQt5.QtWidgets import QMainWindow, QApplication, QDesktopWidget, QFrame, QSplashScreen
 from PyQt5.QtWidgets import QHBoxLayout, QLabel, QVBoxLayout
 from PyQt5.QtCore import Qt
 from utils.dynamicPyQt5Labels import CustomButton
@@ -45,6 +45,9 @@ class RootWindow(QMainWindow):
 
     def __init__(self, model_name):
         super(RootWindow, self).__init__()
+
+        self.splash = QSplashScreen(QPixmap('./resources/images/icon.ico'))
+        self.splash.show()
 
         self.WIDTH = 1024
         self.HEIGHT = 576
@@ -105,15 +108,16 @@ class RootWindow(QMainWindow):
         self._init_sound_devices()
         self._init_bottom_main_frame()
         self._init_window_frame()
-        self._start_action_thread()
+        # self._start_action_thread()
 
         self.main_frame_layout.addWidget(self.bottom_main_frame)
         self.main_frame.setLayout(self.main_frame_layout)
 
         self.setCentralWidget(self.main_frame)
-        self.start_listening_for_max_thread()
         self.show()
+        self.splash.close()
         self.action.say_out_loud("Hello, I'm Max.")
+        self.start_listening_for_max_thread()
 
     def _init_bottom_main_frame(self) -> None:
         self.bottom_main_frame = QFrame()
@@ -289,13 +293,12 @@ class RootWindow(QMainWindow):
         self.action_thread.start()
 
     def _take_action(self):
-        while True:
-            if not self.should_take_action:
-                return
-            time.sleep(5)
+        while self.should_take_action:
+            time.sleep(0.5)
             if self.transcribed_text:
                 self.action.take_action(command=self.transcribed_text)
                 self.transcribed_text = ""
+        return
 
     def start_listening_for_max_thread(self):
         """ Starts a thread to open a stream and listen for the hotword 'max'.
@@ -373,6 +376,7 @@ class RootWindow(QMainWindow):
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             self.recording = False
             self._transcribe_and_print_buffer_audio()
+            self.action.take_action(self.transcribed_text)
             # self._play_recorded_buffer_audio()
             QApplication.setOverrideCursor(QCursor(Qt.ArrowCursor))
             self.mic_label.invert_active_state()
@@ -434,10 +438,11 @@ class RootWindow(QMainWindow):
         self.output_label.moveCursor(QtGui.QTextCursor.End)
 
     def _update_threads(self):
-        for idx, thread in enumerate(self.threads):
-            if not thread.is_alive():
-                thread.join()
-                del self.threads[idx]
+        if self.threads:
+            for idx, thread in enumerate(self.threads):
+                if not thread.is_alive():
+                    thread.join()
+                    del self.threads[idx]
 
     def about(self) -> None:
         """This function takes care of the about dialog."""
