@@ -1,7 +1,7 @@
 from VoiceRecognition.nlu.Watson import Watson
 from equations import listToHyphenString
 from equations import preprocessed
-from equations import math
+from equations import custom_math
 from launchapp import launch_app
 from stocks import get_symbol
 from stocks import company_stock
@@ -45,7 +45,7 @@ class Action:
             self.say_out_loud(wiki_str)
             # TODO wiki.py needs work
         elif intent == "math":
-            equation_str = math(preprocessed(command))
+            equation_str = custom_math(preprocessed(command))
             self.say_out_loud(equation_str)
         elif intent == 'default':
             self.say_out_loud("I didn't understand. You can try rephrasing.")
