@@ -18,6 +18,7 @@ class Action:
         self.watson = Watson()
         self.spell = SpellChecker()
         self.spell.word_frequency.load_text_file("./resources/spellcheck_dictionary.txt")
+        self.spell.export("./my_custom_dictionary.gz", gzipped=True)
 
     def take_action(self, command: str) -> None:
         print("command before spellcheck:", command)
