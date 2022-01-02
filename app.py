@@ -6,13 +6,14 @@
     to accomplish small tasks via voice recognition (using pre-trained models)."""
 
 __author__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
-__copyright__ = "Copyright 2021, SimpleDigitalAssistant"
+__copyright__ = "Copyright 2022, SimpleDigitalAssistant"
 __credits__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
 __license__ = "MIT"
 __version__ = "1.0"
 __maintainer__ = "Hannan Khan"
 __email__ = "hannankhan888@gmail.com"
 
+import os
 import sys
 import threading
 import time
@@ -108,7 +109,7 @@ class RootWindow(QMainWindow):
         self._init_sound_devices()
         self._init_bottom_main_frame()
         self._init_window_frame()
-        # self._start_action_thread()
+        self._start_action_thread()
 
         self.main_frame_layout.addWidget(self.bottom_main_frame)
         self.main_frame.setLayout(self.main_frame_layout)
@@ -164,6 +165,7 @@ class RootWindow(QMainWindow):
         self.input_device_name = self.input_device_dict["name"]
         self.input_channels = self.input_device_dict['maxInputChannels']
         self.default_sample_rate = self.input_device_dict['defaultSampleRate']
+        print(self.input_device_dict)
 
         self.output_device_dict = pyaudio.PyAudio.get_default_output_device_info(self.p)
         self.output_device_num = self.output_device_dict['index']
@@ -268,7 +270,7 @@ class RootWindow(QMainWindow):
         self.minimize_button_label.setFont(QFont(self.lato_font_family, 10))
         self.wf_right_layout.addWidget(self.minimize_button_label)
 
-        self.close_button_label = CustomButton(self.exit_app, self.normal_bg, self.close_button_label_highlight_bg,
+        self.close_button_label = CustomButton(self.clean_exit_app, self.normal_bg, self.close_button_label_highlight_bg,
                                                self.normal_color, self.close_button_label_highlight_color)
         self.close_button_label.setToolTip("Close")
         self.close_button_label.setText("   /   ")
@@ -296,6 +298,8 @@ class RootWindow(QMainWindow):
         while self.should_take_action:
             time.sleep(0.5)
             if self.transcribed_text:
+                if self.transcribed_text == "exit":
+                    self._dirty_exit_app()
                 self.action.take_action(command=self.transcribed_text)
                 self.transcribed_text = ""
         return
@@ -376,7 +380,7 @@ class RootWindow(QMainWindow):
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             self.recording = False
             self._transcribe_and_print_buffer_audio()
-            self.action.take_action(self.transcribed_text)
+            # self.action.take_action(self.transcribed_text)
             # self._play_recorded_buffer_audio()
             QApplication.setOverrideCursor(QCursor(Qt.ArrowCursor))
             self.mic_label.invert_active_state()
@@ -513,17 +517,28 @@ OTHER DEALINGS IN THE SOFTWARE."""
     def minimize_app(self) -> None:
         self.showMinimized()
 
-    def exit_app(self) -> None:
+    def _set_vars_to_false(self):
         self.recording = False
         self.listening_for_max = False
         self.should_take_action = False
 
-        for thread in self.threads:
-            thread.join()
-
+    def _close_connections(self):
         self.stream.stop_stream()
         self.stream.close()
         self.p.terminate()
+
+    def _dirty_exit_app(self):
+        self._set_vars_to_false()
+        self._close_connections()
+        QApplication.quit()
+
+    def clean_exit_app(self) -> None:
+        self._set_vars_to_false()
+
+        for thread in self.threads:
+            thread.join()
+
+        self._close_connections()
 
         sys.exit(0)
 
