@@ -164,8 +164,8 @@ class RootWindow(QMainWindow):
         self.input_device_idx = self.input_device_dict['index']
         self.input_device_name = self.input_device_dict["name"]
         self.input_channels = self.input_device_dict['maxInputChannels']
+        # default sampleRate is 44100
         self.default_sample_rate = self.input_device_dict['defaultSampleRate']
-        print(self.input_device_dict)
 
         self.output_device_dict = pyaudio.PyAudio.get_default_output_device_info(self.p)
         self.output_device_num = self.output_device_dict['index']
@@ -330,8 +330,8 @@ class RootWindow(QMainWindow):
                 self.buffer = self.buffer[-10:]
                 transcribed_txt = self._transcribe_buffer_audio()
                 if "max" in transcribed_txt:
-                    self._play_recorded_buffer_audio()
-                    self.output_label.append(transcribed_txt)
+                    # self._play_recorded_buffer_audio()
+                    # self.output_label.append(transcribed_txt)
                     self._start_recording_thread()
                     self.listening_for_max = False
         return
@@ -373,7 +373,7 @@ class RootWindow(QMainWindow):
         self.recording_thread.setName("recording_thread")
         self.threads.append(self.recording_thread)
         self.recording_thread.start()
-        print("threads: ", self.threads)
+        # print("threads: ", self.threads)
 
     def get_voice_command(self) -> None:
         if self.recording:
