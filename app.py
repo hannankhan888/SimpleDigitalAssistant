@@ -527,8 +527,6 @@ def main():
     desktop = app.desktop()
 
     # gui = RootWindow(model_name="OthmaneJ/distil-wav2vec2")
-    # gui = RootWindow(model_name="speechbrain/asr-wav2vec2-commonvoice-en")
-
     gui = RootWindow(model_name="jonatasgrosman/wav2vec2-large-english")
     # gui = RootWindow(model_name="facebook/wav2vec2-large-960h")
 

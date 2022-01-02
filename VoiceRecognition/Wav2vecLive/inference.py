@@ -82,7 +82,8 @@ if __name__ == "__main__":
     MODELS = {
         "large": "facebook/wav2vec2-large-960h",
         "base": "facebook/wav2vec2-base-960h",
-        "distil": "OthmaneJ/distil-wav2vec2"
+        "distil": "OthmaneJ/distil-wav2vec2",
+        "large_en_commonvoice": "jonatasgrosman/wav2vec2-large-english"
     }
     LM = "../4gram_big.arpa"
     start = time.time()
