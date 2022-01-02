@@ -17,10 +17,16 @@ class Action:
         self.engine.setProperty("rate", 170)
         self.watson = Watson()
         self.spell = SpellChecker()
+        self._init_spell_checker()
+
+    def _init_spell_checker(self):
         self.spell.word_frequency.load_text_file("./resources/spellcheck_dictionary.txt")
+        with open("resources/words_to_remove_from_dictionary.txt", 'r') as file:
+            self.spell.word_frequency.remove(file.readline().strip(" \n"))
         # self.spell.export("./my_custom_dictionary.gz", gzipped=True)
 
     def take_action(self, command: str) -> None:
+        result_str = ""
         print("command before spellcheck:", command)
         command = self.spell_check(command)
         response = self.watson.send_message(command)
@@ -32,23 +38,22 @@ class Action:
             intent = 'default'
         print("intent:", intent)
         if intent == "stocks":
-            stocks_str = company_stock(command)
-            self.say_out_loud(stocks_str)
+            result_str = company_stock(command)
         elif intent == "Weather":
-            weather_str = weather_information(command)
-            self.say_out_loud(weather_str)
+            result_str = weather_information(command)
         elif intent == "wikipedia":
-            wiki_str = wiki_scrape(command)
-            self.say_out_loud(wiki_str)
+            result_str = wiki_scrape(command)
             # TODO wiki.py needs work
         elif intent == "math":
-            equation_str = custom_math(preprocessed(command))
-            self.say_out_loud(equation_str)
+            result_str = custom_math(preprocessed(command))
         elif intent == 'default':
-            self.say_out_loud("I didn't understand. You can try rephrasing.")
+            result_str = "I didn't understand. You can try rephrasing."
+
+        self.say_out_loud(result_str)
 
     def spell_check(self, command: str) -> str:
         """:returns The command string after it has been spellchecked."""
+
         command = command.split()
 
         for idx, word in enumerate(command):

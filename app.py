@@ -289,7 +289,7 @@ class RootWindow(QMainWindow):
         while True:
             if not self.should_take_action:
                 return
-            time.sleep(0.5)
+            time.sleep(5)
             if self.transcribed_text:
                 self.action.take_action(command=self.transcribed_text)
                 self.transcribed_text = ""
@@ -322,6 +322,7 @@ class RootWindow(QMainWindow):
                 self.buffer = self.buffer[-10:]
                 transcribed_txt = self._transcribe_buffer_audio()
                 if "max" in transcribed_txt:
+                    self._play_recorded_buffer_audio()
                     self.output_label.append(transcribed_txt)
                     self.stream.stop_stream()
                     self.stream.close()
@@ -366,7 +367,7 @@ class RootWindow(QMainWindow):
         self.recording_thread.setName("recording_thread")
         self.threads.append(self.recording_thread)
         self.recording_thread.start()
-        # print("threads: ", self.threads)
+        print("threads: ", self.threads)
 
     def get_voice_command(self) -> None:
         if self.recording:

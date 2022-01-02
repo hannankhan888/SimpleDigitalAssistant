@@ -39,8 +39,7 @@ def company_stock(user_inquiry):
             return "I could not find the company symbol."
 
     else:
-        print("I could not find the company symbol.")
-        return None
+        return "I could not find the company symbol."
 
 
 if __name__ == "__main__":

@@ -21,6 +21,7 @@ transformers
 webrtcvad-wheels
 yfinance
 numpy
+spellchecker
 future
 soundfile
 pyctcdecode
