@@ -57,7 +57,6 @@ class Action:
                 result_str = weather_information(command)
             elif intent == "wikipedia":
                 result_str = wiki_scrape(command)
-                # TODO wiki.py needs work
             elif intent == "math":
                 result_str = custom_math(preprocessed(command))
             elif intent == 'default':

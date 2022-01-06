@@ -11,9 +11,14 @@
 
 from bs4 import BeautifulSoup
 import requests
-def wiki_scrape(topic_name):
+def wiki_scrape(command):
+    command=command.lower()
+    if "tell me about " in command:
+        command = command.replace("tell me about ", "")
+        print(command)
+
     try:
-        user_request = topic_name
+        user_request = command
         response = requests.get(url="https://en.wikipedia.org/wiki/" + user_request)
         # print(response.status_code)
 
@@ -30,13 +35,18 @@ def wiki_scrape(topic_name):
         if len(list_elements) > 0 and len(paragraph.split()) < 15:
             for bullets in list_elements:
                 print(bullets.get_text())
-
+                return bullets.get_text()
         else:
             print(paragraph)
-
+            return paragraph
     except Exception as e:
         print(e)
 
 
 if __name__ == "__main__":
     wiki_scrape("India")
+    wiki_scrape("Tell me about India")
+    wiki_scrape("Tell me about United States of America")
+    wiki_scrape("Tell me about Soviet Union")
+    wiki_scrape("Tell me about Artificial Intelligence")
+    wiki_scrape("Tell me about Orange")
