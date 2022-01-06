@@ -5,7 +5,7 @@ librosa
 ffmpeg
 scipy
 requests
-dotenv
+python-dotenv
 pandas
 numpy
 comtypes
