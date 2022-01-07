@@ -6,7 +6,9 @@ __copyright__ = "Copyright 2022, SimpleDigitalAssistant"
 __credits__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
 __license__ = "MIT"
 
-import pyttsx3
+import threading
+
+from PyQt5 import QtTextToSpeech
 from spellchecker import SpellChecker
 
 from VoiceRecognition.nlu.Watson import Watson
@@ -16,13 +18,10 @@ from stocks import company_stock
 from weather import weather_information
 from wiki import wiki_scrape
 
-import multiprocessing
-import threading
 
 class Action:
-    def __init__(self):
-        self.engine = pyttsx3.init()
-        self.engine.setProperty("rate", 170)
+    def __init__(self, engine: QtTextToSpeech.QTextToSpeech):
+        self.engine = engine
         self.watson = Watson()
         self.spell = SpellChecker()
         self._init_spell_checker()
@@ -39,10 +38,8 @@ class Action:
 
     def take_action(self, command: str) -> None:
         if self.currently_taking_action:
-            # if self.engine.isBusy():
-            #     self.engine.stop()
-            # for thread in self.threads:
-            #     thread.join()
+            for thread in self.threads:
+                thread.join()
             self.currently_taking_action = False
 
         self.currently_taking_action = True
@@ -60,7 +57,7 @@ class Action:
         command = self.spell_check(command)
         response = self.watson.send_message(command)
         print("command after spellcheck:", command)
-        print("response", response)
+        print("response:", response)
         try:
             intent = self.watson.get_intents(response)[0]["intent"]
             confidence = self.watson.get_intents(response)[0]['confidence']
@@ -76,14 +73,12 @@ class Action:
             elif intent == "wikipedia":
                 result_str = wiki_scrape(command)
             elif intent == "math":
-                result_str = custom_math(preprocessed(command))
+                result_str = str(custom_math(preprocessed(command)))
             elif intent == 'default':
                 result_str = "I didn't understand. You can try rephrasing."
         else:
             result_str = "I didn't understand. You can try rephrasing."
 
-        if self.engine.isBusy():
-            self.engine.stop()
         self.say_out_loud(result_str)
 
     def spell_check(self, command: str) -> str:
@@ -101,9 +96,9 @@ class Action:
         """ Says a string out loud to the best of its ability."""
 
         self.engine.say(text)
-        self.engine.runAndWait()
 
 
 if __name__ == '__main__':
-    action_obj = Action()
+    speech = QtTextToSpeech.QTextToSpeech()
+    action_obj = Action(speech)
     action_obj.take_action("What is Google")

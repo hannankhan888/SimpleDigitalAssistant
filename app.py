@@ -21,7 +21,7 @@ import time
 import numpy as np
 import pyaudio
 import sounddevice as sd
-from PyQt5 import QtWidgets, QtGui
+from PyQt5 import QtWidgets, QtGui, QtTextToSpeech
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QFontDatabase, QCursor, QPixmap
 from PyQt5.QtWidgets import QHBoxLayout, QLabel, QVBoxLayout
@@ -72,7 +72,8 @@ class RootWindow(QMainWindow):
         self.model_name = model_name
         self.wav2vec_inference = Wave2Vec2Inference(self.model_name)
         # self.wav2vec_inference = Wave2Vec2Inference(self.model_name, lm_path=r"C:\Users\HannanKhan\Downloads\4-gram-librispeech.bin")
-        self.action = Action()
+        self.speech = QtTextToSpeech.QTextToSpeech()
+        self.action = Action(self.speech)
 
         self.setFixedWidth(self.WIDTH)
         self.setFixedHeight(self.HEIGHT)
@@ -118,7 +119,7 @@ class RootWindow(QMainWindow):
         self.setCentralWidget(self.main_frame)
         self.show()
         self.splash.close()
-        self.action.say_out_loud("Hello, I'm Max.")
+        self.speech.say("Hello, I'm Max.")
         self.start_listening_for_max_thread()
 
     def _init_bottom_main_frame(self) -> None:
@@ -336,6 +337,12 @@ class RootWindow(QMainWindow):
                 self.buffer = self.buffer[-10:]
                 transcribed_txt = self._transcribe_buffer_audio()
                 if "max" in transcribed_txt:
+                    # Ready == 0
+                    # Speaking == 1
+                    # Paused == 2
+                    # BackEnd Error == 3
+                    if self.speech.state() == 1:
+                        self.speech.stop()
                     # self._play_recorded_buffer_audio()
                     # self.output_label.append(transcribed_txt)
                     self._start_recording_thread()
