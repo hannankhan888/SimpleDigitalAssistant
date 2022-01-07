@@ -110,7 +110,7 @@ class RootWindow(QMainWindow):
         self._init_sound_devices()
         self._init_bottom_main_frame()
         self._init_window_frame()
-        self._start_action_thread()
+        # self._start_action_thread()
 
         self.main_frame_layout.addWidget(self.bottom_main_frame)
         self.main_frame.setLayout(self.main_frame_layout)
@@ -386,7 +386,7 @@ class RootWindow(QMainWindow):
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             self.recording = False
             self._transcribe_and_print_buffer_audio()
-            # self.action.take_action(self.transcribed_text)
+            self.action.take_action(self.transcribed_text)
             # self._play_recorded_buffer_audio()
             QApplication.setOverrideCursor(QCursor(Qt.ArrowCursor))
             self.mic_label.invert_active_state()

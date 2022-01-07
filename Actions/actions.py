@@ -16,6 +16,8 @@ from stocks import company_stock
 from weather import weather_information
 from wiki import wiki_scrape
 
+import multiprocessing
+import threading
 
 class Action:
     def __init__(self):
@@ -24,14 +26,33 @@ class Action:
         self.watson = Watson()
         self.spell = SpellChecker()
         self._init_spell_checker()
+        self.currently_taking_action = False
+        self.threads = []
+        self.take_action_thread = None
+        self.currently_speaking = False
 
     def _init_spell_checker(self):
-        self.spell.word_frequency.load_text_file("./resources/spellcheck_dictionary.txt")
+        self.spell.word_frequency.load_text_file("resources/spellcheck_dictionary.txt")
         with open("resources/words_to_remove_from_dictionary.txt", 'r') as file:
             self.spell.word_frequency.remove(file.readline().strip(" \n"))
         # self.spell.export("./my_custom_dictionary.gz", gzipped=True)
 
     def take_action(self, command: str) -> None:
+        if self.currently_taking_action:
+            # if self.engine.isBusy():
+            #     self.engine.stop()
+            # for thread in self.threads:
+            #     thread.join()
+            self.currently_taking_action = False
+
+        self.currently_taking_action = True
+        take_action_thread = threading.Thread(target=self._take_action, args=(command,))
+        take_action_thread.setDaemon(True)
+        take_action_thread.setName("action_thread")
+        self.threads.append(take_action_thread)
+        take_action_thread.start()
+
+    def _take_action(self, command: str) -> None:
         result_str = ""
         intent = "default"
         confidence = 0
@@ -61,6 +82,8 @@ class Action:
         else:
             result_str = "I didn't understand. You can try rephrasing."
 
+        if self.engine.isBusy():
+            self.engine.stop()
         self.say_out_loud(result_str)
 
     def spell_check(self, command: str) -> str:
@@ -83,4 +106,4 @@ class Action:
 
 if __name__ == '__main__':
     action_obj = Action()
-    action_obj.take_action("What five times five")
+    action_obj.take_action("What is Google")
