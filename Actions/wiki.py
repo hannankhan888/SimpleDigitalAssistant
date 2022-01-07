@@ -6,16 +6,19 @@ __copyright__ = "Copyright 2022, SimpleDigitalAssistant"
 __credits__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
 __license__ = "MIT"
 
-
 import requests
 from bs4 import BeautifulSoup
 
 
 def wiki_scrape(command):
     command = command.lower()
-    if "tell me about " in command:
-        command = command.replace("tell me about ", "")
-        print(command)
+    ignore = ["tell me about ", "give me some facts about ", "give a fact about ", "give a fact about ", "what is a ",
+              "what is ", "what are ", "who is ", "who are ", "what's an ", "what's a"]
+
+    for phrase in ignore:
+        if phrase in command:
+            command = command.replace(phrase, "")
+            print(command)
 
     try:
         user_request = command
@@ -46,8 +49,8 @@ def wiki_scrape(command):
 if __name__ == "__main__":
     wiki_scrape("India")
     wiki_scrape("Tell me about India.")
-    wiki_scrape("Tell me about India")
-    wiki_scrape("Tell me about United States of America")
-    wiki_scrape("Tell me about Soviet Union")
+    wiki_scrape("give me some facts about India")
+    wiki_scrape("What is a United States of America")
+    wiki_scrape("What is Soviet Union")
     wiki_scrape("Tell me about Artificial Intelligence")
     wiki_scrape("Tell me about Orange")
