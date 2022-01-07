@@ -1,13 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# __author__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
-# __copyright__ = "Copyright 2022, SimpleDigitalAssistant"
-# __credits__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
-# __license__ = "MIT"
-# __version__ = "1.0"
-# __maintainer__ = "Hannan Khan"
-# __email__ = "hannankhan888@gmail.com"
+__author__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
+__copyright__ = "Copyright 2022, SimpleDigitalAssistant"
+__credits__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
+__license__ = "MIT"
 
 import pyttsx3
 from spellchecker import SpellChecker
@@ -42,7 +39,7 @@ class Action:
         command = self.spell_check(command)
         response = self.watson.send_message(command)
         print("command after spellcheck:", command)
-        # print("response", response)
+        print("response", response)
         try:
             intent = self.watson.get_intents(response)[0]["intent"]
             confidence = self.watson.get_intents(response)[0]['confidence']

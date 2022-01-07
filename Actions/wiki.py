@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# __author__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
-# __copyright__ = "Copyright 2022, SimpleDigitalAssistant"
-# __credits__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
-# __license__ = "MIT"
-# __version__ = "1.0"
-# __maintainer__ = "Hannan Khan"
-# __email__ = "hannankhan888@gmail.com"
+__author__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
+__copyright__ = "Copyright 2022, SimpleDigitalAssistant"
+__credits__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
+__license__ = "MIT"
 
-from bs4 import BeautifulSoup
+
 import requests
+from bs4 import BeautifulSoup
+
+
 def wiki_scrape(command):
-    command=command.lower()
+    command = command.lower()
     if "tell me about " in command:
         command = command.replace("tell me about ", "")
         print(command)
@@ -45,6 +45,7 @@ def wiki_scrape(command):
 
 if __name__ == "__main__":
     wiki_scrape("India")
+    wiki_scrape("Tell me about India.")
     wiki_scrape("Tell me about India")
     wiki_scrape("Tell me about United States of America")
     wiki_scrape("Tell me about Soviet Union")

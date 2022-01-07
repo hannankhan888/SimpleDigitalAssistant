@@ -3,13 +3,11 @@
 
 """This file contains various objects used to implement minimalist UI."""
 
-__author__ = "Hannan Khan"
-__copyright__ = "Copyright 2021, SimpleDigitalAssistant"
-__credits__ = ["Hannan Khan"]
+__author__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
+__copyright__ = "Copyright 2022, SimpleDigitalAssistant"
+__credits__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
 __license__ = "MIT"
-__version__ = "1.0"
-__maintainer__ = "Hannan Khan"
-__email__ = "hannankhan888@gmail.com"
+
 
 from PyQt5 import QtGui, QtWidgets, QtCore
 from PyQt5.QtCore import Qt
