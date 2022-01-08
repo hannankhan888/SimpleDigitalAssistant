@@ -17,6 +17,7 @@ from equations import preprocessed
 from stocks import company_stock
 from weather import weather_information
 from wiki import wiki_scrape
+from getTime import get_time
 
 
 class Action:
@@ -74,6 +75,8 @@ class Action:
                 result_str = wiki_scrape(command)
             elif intent == "math":
                 result_str = str(custom_math(preprocessed(command)))
+            elif intent == "time":
+                result_str = get_time(command)
             elif intent == 'default':
                 result_str = "I didn't understand. You can try rephrasing."
         else:
