@@ -8,7 +8,6 @@ __copyright__ = "Copyright 2022, SimpleDigitalAssistant"
 __credits__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
 __license__ = "MIT"
 
-
 from PyQt5 import QtGui, QtWidgets, QtCore
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMainWindow
