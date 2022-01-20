@@ -166,6 +166,8 @@ class RootWindow(QMainWindow):
         self.bottom_main_frame.setLayout(self.bottom_main_frame_layout)
 
     def _init_sound_devices(self) -> None:
+        if self.p:
+            self.p.terminate()
         self.p = pyaudio.PyAudio()
         self.input_device_dict = pyaudio.PyAudio.get_default_input_device_info(self.p)
         self.input_device_idx = self.input_device_dict['index']
@@ -179,6 +181,9 @@ class RootWindow(QMainWindow):
         self.output_device_num = self.output_device_dict['index']
         self.output_device_name = self.output_device_dict["name"]
 
+        if self.stream:
+            self.stream.stop_stream()
+            self.stream.close()
         self.stream = self.p.open(rate=SAMPLE_RATE, channels=CHANNELS, format=SAMPLE_FORMAT,
                                   frames_per_buffer=CHUNK, input=True)
 
@@ -509,15 +514,28 @@ class RootWindow(QMainWindow):
         about_dialog.exec_()
 
     def settings_dialog(self) -> None:
+        # we have to stop the listening for max thread as it is using the self.stream obj.
+        self.listening_for_max = False
+        self._update_threads()
         settings_dialog = FramelessSettingsDialog(self, "", self.normal_bg,
                                                   self.minimize_button_label_highlight_bg,
                                                   self.normal_color, self.highlight_color,
                                                   self.close_button_label_highlight_bg,
                                                   self.close_button_label_highlight_color,
                                                   "Settings", QFont(self.lato_font_family, 12),
-                                                  self.input_device_name, self.output_device_name)
+                                                  self.input_device_name, self.output_device_name,
+                                                  self._init_sound_devices)
 
-        settings_dialog.exec_()
+        result = settings_dialog.exec_()
+        # Ready == 0
+        # Speaking == 1
+        # Paused == 2
+        # BackEnd Error == 3
+        if self.speech.state() == 1:
+            self.speech.stop()
+        self._init_sound_devices()
+        # start up listen for max thread again, since we closed it in init sound devices
+        self.start_listening_for_max_thread()
 
     def license(self) -> None:
         """ This function makes a scrollable license dialog."""
@@ -600,9 +618,7 @@ def main():
     app = QApplication(sys.argv)
     desktop = app.desktop()
 
-    # gui = RootWindow(model_name="OthmaneJ/distil-wav2vec2")
     gui = RootWindow(model_name="jonatasgrosman/wav2vec2-large-english")
-    # gui = RootWindow(model_name="facebook/wav2vec2-large-960h")
 
     sys.exit(app.exec_())
 
