@@ -8,11 +8,18 @@ __copyright__ = "Copyright 2022, SimpleDigitalAssistant"
 __credits__ = ["Hannan Khan", "Salman Nazir", "Reza Mohideen", "Ali Abdul-Hameed"]
 __license__ = "MIT"
 
+import os
+
 from PyQt5 import QtGui, QtWidgets, QtCore
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMainWindow
 
 from dynamicPyQt5Labels import ColorChangingLabel, CustomButton, ScrollableLabel
+
+
+def open_windows_sound_settings(event):
+    # wont work if wrapped as @staticmethod
+    os.system('cmd /c "start ms-settings:sound"')
 
 
 class FramelessDialog(QtWidgets.QDialog):
@@ -191,7 +198,7 @@ class FramelessMessageDialog(FramelessDialog):
 
 
 class FramelessScrollableMessageDialog(FramelessDialog):
-    """This class implements a FramelessDialog with a scrollable, non-styleized message
+    """This class implements a FramelessDialog with a scrollable, non-stylized message
     in its middle frame."""
 
     def __init__(self, master: QMainWindow = None, message: str = "", normal_bg: QtGui.QColor = None,
@@ -207,3 +214,53 @@ class FramelessScrollableMessageDialog(FramelessDialog):
         self.master = master
         self.message_label = ScrollableLabel(message)
         self.middle_frame_layout.addWidget(self.message_label)
+
+
+class FramelessSettingsDialog(FramelessDialog):
+    """This class implements a frameless dialog which displays input output audio
+    settings. It also includes a link to open the sound settings, so as to change the
+    input/output devices."""
+
+    def __init__(self, master: QMainWindow = None, message: str = "", normal_bg: QtGui.QColor = None,
+                 highlight_bg: QtGui.QColor = None, normal_color: QtGui.QColor = None,
+                 highlight_color: QtGui.QColor = None, close_button_highlight_bg: QtGui.QColor = None,
+                 close_button_highlight_color: QtGui.QColor = None, window_title: str = "",
+                 current_font: QtGui.QFont = None, input_device_name: str = "",
+                 output_device_name: str = ""):
+        super(FramelessSettingsDialog, self).__init__(master, message, normal_bg,
+                                                      highlight_bg, normal_color, highlight_color,
+                                                      close_button_highlight_bg, close_button_highlight_color,
+                                                      window_title, current_font)
+
+        self.master = master
+        self.message = message
+        self.input_device_name = input_device_name
+        self.output_device_name = output_device_name
+        self._init_windows_sound_settings_label()
+        self._init_io_devices_layout()
+
+    def _init_windows_sound_settings_label(self):
+        self.open_windows_sound_settings_label = QtWidgets.QLabel()
+        self.open_windows_sound_settings_label.setText(
+            '<a style="color: rgba(6, 69, 173, 255)">open sound settings</a>')
+        self.open_windows_sound_settings_label.setCursor(Qt.PointingHandCursor)
+        self.open_windows_sound_settings_label.mousePressEvent = open_windows_sound_settings
+        self.middle_frame_layout.addWidget(self.open_windows_sound_settings_label)
+
+    def _init_io_devices_layout(self):
+        self.IO_devices_layout = QtWidgets.QVBoxLayout()
+        self.input_layout = QtWidgets.QHBoxLayout()
+        self.input_label = QtWidgets.QLabel("Input:")
+        self.input_device_label = QtWidgets.QLabel(self.input_device_name)
+        self.input_layout.addWidget(self.input_label)
+        self.input_layout.addWidget(self.input_device_label)
+
+        self.output_layout = QtWidgets.QHBoxLayout()
+        self.output_label = QtWidgets.QLabel("Output:")
+        self.output_device_label = QtWidgets.QLabel(self.output_device_name)
+        self.output_layout.addWidget(self.output_label)
+        self.output_layout.addWidget(self.output_device_label)
+
+        self.IO_devices_layout.addLayout(self.input_layout)
+        self.IO_devices_layout.addLayout(self.output_layout)
+        self.middle_frame_layout.addLayout(self.IO_devices_layout)

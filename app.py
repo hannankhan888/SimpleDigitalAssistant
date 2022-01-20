@@ -14,9 +14,11 @@ __version__ = "1.0"
 __maintainer__ = "Hannan Khan"
 __email__ = "hannankhan888@gmail.com"
 
+import os.path
 import sys
 import threading
 import time
+import json
 
 import numpy as np
 import pyaudio
@@ -32,6 +34,7 @@ from VoiceRecognition.Wav2vecLive.inference import Wave2Vec2Inference
 from utils.dynamicPyQt5Labels import CustomButton
 from utils.dynamicPyQt5Labels import ImageChangingLabel, ImageBackgroundChangingLabel
 from utils.framelessDialogs import FramelessMessageDialog, FramelessScrollableMessageDialog
+from utils.framelessDialogs import FramelessSettingsDialog
 
 CHUNK = 1024
 SAMPLE_FORMAT = pyaudio.paInt16
@@ -54,6 +57,7 @@ class RootWindow(QMainWindow):
         self.WIDTH = 1024
         self.HEIGHT = 576
         self.app_name = "SimpleDigitalAssistant"
+        self.settings = {}
         self.mousePressPos = None
         self.mouseMovePos = None
         self.listening_for_max = False
@@ -107,6 +111,7 @@ class RootWindow(QMainWindow):
         self.main_frame_layout.setContentsMargins(0, 0, 0, 0)
         self.main_frame_layout.setAlignment(Qt.AlignTop)
 
+        self._init_settings()
         self._init_colors()
         self._init_sound_devices()
         self._init_bottom_main_frame()
@@ -198,6 +203,14 @@ class RootWindow(QMainWindow):
     def mouseReleaseEvent(self, a0: QtGui.QMouseEvent) -> None:
         super(RootWindow, self).mouseReleaseEvent(a0)
 
+    def _init_settings(self) -> None:
+        if os.path.exists("settings.json"):
+            with open("settings.json", 'r') as settings_file:
+                self.settings = json.load(settings_file)
+        else:
+            with open("settings.json", "w") as settings_file:
+                json.dump(self.settings, settings_file)
+
     def _init_colors(self) -> None:
         # Champagne Pink
         self.normal_bg = QtGui.QColor()
@@ -260,7 +273,7 @@ class RootWindow(QMainWindow):
                                                                   self.minimize_button_label_highlight_bg,
                                                                   "resources/images/settings_normal_icon.png",
                                                                   "resources/images/settings_highlight_icon.png",
-                                                                  self.settings, 30, 60)
+                                                                  self.settings_dialog, 30, 60)
         self.settings_button_label.setToolTip("Settings")
         self.settings_button_label.setContentsMargins(0, 0, 5, 0)
         self.wf_right_layout.addWidget(self.settings_button_label)
@@ -495,9 +508,16 @@ class RootWindow(QMainWindow):
         about_dialog.middle_frame_layout.addWidget(license_label)
         about_dialog.exec_()
 
-    # TODO: settings menu to display current input/output, and other settings.
-    def settings(self) -> None:
-        pass
+    def settings_dialog(self) -> None:
+        settings_dialog = FramelessSettingsDialog(self, "", self.normal_bg,
+                                                  self.minimize_button_label_highlight_bg,
+                                                  self.normal_color, self.highlight_color,
+                                                  self.close_button_label_highlight_bg,
+                                                  self.close_button_label_highlight_color,
+                                                  "Settings", QFont(self.lato_font_family, 12),
+                                                  self.input_device_name, self.output_device_name)
+
+        settings_dialog.exec_()
 
     def license(self) -> None:
         """ This function makes a scrollable license dialog."""
