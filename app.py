@@ -523,8 +523,7 @@ class RootWindow(QMainWindow):
                                                   self.close_button_label_highlight_bg,
                                                   self.close_button_label_highlight_color,
                                                   "Settings", QFont(self.lato_font_family, 12),
-                                                  self.input_device_name, self.output_device_name,
-                                                  self._init_sound_devices)
+                                                  self.input_device_name, self.output_device_name)
 
         result = settings_dialog.exec_()
         # Ready == 0

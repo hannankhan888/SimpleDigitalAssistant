@@ -226,7 +226,7 @@ class FramelessSettingsDialog(FramelessDialog):
                  highlight_color: QtGui.QColor = None, close_button_highlight_bg: QtGui.QColor = None,
                  close_button_highlight_color: QtGui.QColor = None, window_title: str = "",
                  current_font: QtGui.QFont = None, input_device_name: str = "",
-                 output_device_name: str = "", _init_sound_devices: callable = None):
+                 output_device_name: str = ""):
         super(FramelessSettingsDialog, self).__init__(master, message, normal_bg,
                                                       highlight_bg, normal_color, highlight_color,
                                                       close_button_highlight_bg, close_button_highlight_color,
@@ -236,7 +236,6 @@ class FramelessSettingsDialog(FramelessDialog):
         self.message = message
         self.input_device_name = input_device_name
         self.output_device_name = output_device_name
-        self._init_sound_devices = _init_sound_devices
         self._init_windows_sound_settings_label()
         self._init_io_devices_layout()
 
@@ -265,7 +264,3 @@ class FramelessSettingsDialog(FramelessDialog):
         self.IO_devices_layout.addLayout(self.input_layout)
         self.IO_devices_layout.addLayout(self.output_layout)
         self.middle_frame_layout.addLayout(self.IO_devices_layout)
-
-    def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
-        # self._init_sound_devices()
-        super(FramelessSettingsDialog, self).closeEvent(a0)
